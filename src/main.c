@@ -73,6 +73,11 @@ void helloSender(void *pvParameter){
     ctr++;
 }
 
+void teleUpdateTask(void *pvParameter){
+    update_telemetry();
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+}
+
 
 void app_main()
 {
@@ -82,6 +87,7 @@ void app_main()
     xTaskCreate(blink_task, "blink_task", 4096, NULL, 5, NULL);
     xTaskCreate(ramp_task, "ramp_task", 4096, NULL, 5, NULL);
     xTaskCreate(helloSender, "helloSender", 4096, NULL, 5, NULL);
+    xTaskCreate(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL);
 
 }
 
