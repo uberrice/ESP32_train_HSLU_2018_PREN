@@ -1,7 +1,7 @@
-#include "telemetry_core.h"
-#include "framing.h"
-#include "crc16.h"
-#include "dictionnary.h"
+#include "telemetry/headers/telemetry_core.h"
+#include "telemetry/headers/framing.h"
+#include "telemetry/headers/crc16.h"
+#include "telemetry/headers/dictionnary.h"
 
 static TM_state * statePtr;
 static TM_transport * transportPtr;
@@ -233,45 +233,45 @@ void try_update_hashtable(TM_msg * msg)
   if(np == NULL)
     return;
 
-  switch(msg->type)
+  switch((int)(msg->type))
   {
-      case TM_float32:
+      case 0: // float32
         // If hashtable has an entry of type float 32 under received topic
         if (np->ptr_f32 == NULL)
           break;
         emplace_f32(msg, np->ptr_f32);
         break;
-      case TM_uint8:
+      case 1: // uint8
         // If hashtable has an entry of type float 32 under received topic
         if (np->ptr_u8 == NULL)
           break;
         emplace_u8(msg, np->ptr_u8);
         break;
-      case TM_uint16:
+      case 2: //uint16
         // If hashtable has an entry of type float 32 under received topic
         if (np->ptr_u16 == NULL)
           break;
         emplace_u16(msg, np->ptr_u16);
         break;
-      case TM_uint32:
+      case 3: //uint32
         // If hashtable has an entry of type float 32 under received topic
         if (np->ptr_u32 == NULL)
           break;
         emplace_u32(msg, np->ptr_u32);
         break;
-      case TM_int8:
+      case 4: //int8
         // If hashtable has an entry of type float 32 under received topic
         if (np->ptr_i8 == NULL)
           break;
         emplace_i8(msg, np->ptr_i8);
         break;
-      case TM_int16:
+      case 5: //int16
         // If hashtable has an entry of type float 32 under received topic
         if (np->ptr_i16 == NULL)
           break;
         emplace_i16(msg, np->ptr_i16);
         break;
-      case TM_int32:
+      case 6: //int32
         // If hashtable has an entry of type float 32 under received topic
         if (np->ptr_i32 == NULL)
           break;

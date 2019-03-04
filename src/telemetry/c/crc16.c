@@ -1,4 +1,4 @@
-#include "crc16.h"
+#include "telemetry/headers/crc16.h"
 
 uint16_t crc16(uint8_t* data, uint32_t len)
 {
