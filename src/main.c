@@ -11,7 +11,8 @@
 #include "freertos/task.h"
 #include "driver/gpio.h"
 #include "sdkconfig.h"
-#include "mcp.c"
+#include "mcp.h"
+#include "driver/mcpwm.h"
 #include "ser_init.h"
 #include "telemetry/headers/telemetry_core.h"
 
@@ -66,7 +67,7 @@ void ramp_task(void *pvParameter)
     }
 }
 uint16_t ctr = 0;
-void helloSender(void){
+void helloSender(void *pvParameter){
     publish_u16("helloWorldTopic",ctr);
     vTaskDelay(500 / portTICK_PERIOD_MS);
     ctr++;
@@ -76,7 +77,8 @@ void helloSender(void){
 void app_main()
 {
     tel_init();
-    xTaskCreate(mcpwm_example_config, "mcpwm_example_config", 4096, NULL, 5, NULL);
+    mcpwm_example_config();
+    //xTaskCreate(mcpwm_example_config, "mcpwm_example_config", 4096, NULL, 5, NULL);
     xTaskCreate(blink_task, "blink_task", 4096, NULL, 5, NULL);
     xTaskCreate(ramp_task, "ramp_task", 4096, NULL, 5, NULL);
     xTaskCreate(helloSender, "helloSender", 4096, NULL, 5, NULL);

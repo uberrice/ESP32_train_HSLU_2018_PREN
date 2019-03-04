@@ -23,6 +23,7 @@
 #include "driver/mcpwm.h"
 #include "soc/mcpwm_reg.h"
 #include "soc/mcpwm_struct.h"
+#include "mcp.h"
 
 #define MCPWM_EN_CARRIER 0   //Make this 1 to test carrier submodule of mcpwm, set high frequency carrier parameters
 #define MCPWM_EN_DEADTIME 0  //Make this 1 to test deadtime submodule of mcpwm, set deadtime value and deadtime mode
@@ -195,7 +196,7 @@ static void IRAM_ATTR isr_handler()
 /**
  * @brief Configure whole MCPWM module
  */
-static void mcpwm_example_config(void *arg)
+void mcpwm_example_config(void)
 {
     //1. mcpwm gpio initialization
     mcpwm_example_gpio_initialize();

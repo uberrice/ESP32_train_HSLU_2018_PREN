@@ -7,6 +7,14 @@
         "framing.h": "c",
         "crc16.h": "c",
         "uart.h": "c",
-        "iostream": "c"
+        "iostream": "c",
+        "rtc.h": "c",
+        "mcpwm_reg.h": "c",
+        "mcp.h": "c",
+        "mcpwm_struct.h": "c",
+        "mcpwm.h": "c",
+        "esp_attr.h": "c",
+        "ser_init.h": "c",
+        "telemetry_core.h": "c"
     }
 }
