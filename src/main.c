@@ -12,6 +12,8 @@
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 #include "mcp.c"
+#include "ser_init.h"
+#include "telemetry/headers/telemetry_core.h"
 
 /* Can run 'make menuconfig' to choose the GPIO to blink,
    or you can edit the following line and set a number here.
@@ -63,13 +65,21 @@ void ramp_task(void *pvParameter)
         }
     }
 }
+uint16_t ctr = 0;
+void helloSender(void){
+    publish_u16("helloWorldTopic",ctr);
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+    ctr++;
+}
 
 
 void app_main()
 {
+    tel_init();
     xTaskCreate(mcpwm_example_config, "mcpwm_example_config", 4096, NULL, 5, NULL);
     xTaskCreate(blink_task, "blink_task", 4096, NULL, 5, NULL);
     xTaskCreate(ramp_task, "ramp_task", 4096, NULL, 5, NULL);
+    xTaskCreate(helloSender, "helloSender", 4096, NULL, 5, NULL);
 
 }
 

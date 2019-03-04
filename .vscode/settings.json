@@ -5,6 +5,8 @@
     },
     "files.associations": {
         "framing.h": "c",
-        "crc16.h": "c"
+        "crc16.h": "c",
+        "uart.h": "c",
+        "iostream": "c"
     }
 }
