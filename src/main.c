@@ -81,13 +81,17 @@ void teleUpdateTask(void *pvParameter){
 
 void app_main()
 {
+    //Setup Code, Initialization of components
     tel_init();
     mcpwm_example_config();
+
+    //Creating tasks for the RTOS to run
+
     //xTaskCreate(mcpwm_example_config, "mcpwm_example_config", 4096, NULL, 5, NULL);
-    xTaskCreate(blink_task, "blink_task", 4096, NULL, 5, NULL);
-    xTaskCreate(ramp_task, "ramp_task", 4096, NULL, 5, NULL);
-    xTaskCreate(helloSender, "helloSender", 4096, NULL, 5, NULL);
-    xTaskCreate(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL);
+    xTaskCreate(blink_task, "blink_task", 4096, NULL, 5, NULL); //blinks on port 2
+    xTaskCreate(ramp_task, "ramp_task", 4096, NULL, 5, NULL); //Ramps the MCPWM up and down
+    xTaskCreate(helloSender, "helloSender", 4096, NULL, 5, NULL); //sends an incrementing number on topic helloWorldTopic every 500ms
+    xTaskCreate(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL); //Calls the update_telemetry function as often as possible
 
 }
 
