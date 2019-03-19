@@ -32,12 +32,15 @@ int32_t uart_mywrite(uint8_t* buf, uint32_t sizeToWrite){
     return uart_write_bytes(uart_num,(char*)buf,sizeToWrite);
 }
 
-int32_t uart_myreadable(void){
-    return 1;
+int32_t uart_myreadable(void){ //adapts uart buffered data length function to return an int32
+    size_t* readable_size;
+    readable_size = malloc(sizeof(size_t));
+    uart_get_buffered_data_len(uart_num, readable_size);
+    return (int32_t)(*readable_size);
 }
 
 int32_t uart_mywriteable(void){
-    return 1;
+    return 0xFFFFFFFF;
 }
 
 void tel_init(void){

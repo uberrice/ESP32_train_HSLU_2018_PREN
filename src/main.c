@@ -74,8 +74,11 @@ void helloSender(void *pvParameter){
 }
 
 void teleUpdateTask(void *pvParameter){
-    update_telemetry();
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    while(1){
+        update_telemetry();
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+
 }
 
 
