@@ -46,9 +46,11 @@ void ramp_task(void *pvParameter)
     while(1) {
         if(ramp_cntr == 0){
             dir = true;
+            printf("Motor dir reversed!\n");
         }
         if(ramp_cntr == 100){
             dir = false;
+            printf("Motor dir reversed!\n");
         }
 
 
@@ -83,6 +85,8 @@ void app_main()
 {
     //Setup Code, Initialization of components
     //tel_init();
+    printf("\ntesting functionality\n");
+    xTaskCreate(tel_init,"tel_init",4096, NULL, 5, NULL);
     xTaskCreate(mcpwm_example_config,"mcpwmconf", 4096, NULL, 5, NULL);
 
     //Creating tasks for the RTOS to run

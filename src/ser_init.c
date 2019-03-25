@@ -7,7 +7,6 @@
 #include "driver/uart.h"
 #include "ser_init.h"
     
-const int uart_num = USED_UART_NUM;
 //UART0 should be configured like this:
 //Port 22 is RTS, whatever that is
 //The other ports are labelled as RX and TX
@@ -22,21 +21,22 @@ void ser_init(void){
     .flow_ctrl = UART_HW_FLOWCTRL_CTS_RTS,
     .rx_flow_ctrl_thresh = 122,
     };
-    uart_param_config(uart_num, &uart_config);
+    uart_param_config(USED_UART_NUM, &uart_config);
+    uart_set_pin(USED_UART_NUM, UART_TX_PIN, UART_RX_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 }
 
 int32_t uart_myread(uint8_t* buf, uint32_t sizeToRead){
-    return uart_read_bytes(uart_num,buf,sizeToRead,1000);
+    return uart_read_bytes(USED_UART_NUM,buf,sizeToRead,1000);
 }
 
 int32_t uart_mywrite(uint8_t* buf, uint32_t sizeToWrite){
-    return uart_write_bytes(uart_num,(char*)buf,sizeToWrite);
+    return uart_write_bytes(USED_UART_NUM,(char*)buf,sizeToWrite);
 }
 
 int32_t uart_myreadable(void){ //adapts uart buffered data length function to return an int32
     size_t* readable_size;
     readable_size = malloc(sizeof(size_t));
-    uart_get_buffered_data_len(uart_num, readable_size);
+    uart_get_buffered_data_len(USED_UART_NUM, readable_size);
     return (int32_t)(*readable_size);
 }
 
@@ -44,12 +44,15 @@ int32_t uart_mywriteable(void){
     return 0xFFFFFFFF;
 }
 
-void tel_init(void){
+void tel_init(void* pv){
     ser_init();
+    printf("serial initialized!\n");
     TM_transport transport;
     transport.read = uart_myread;
     transport.write = uart_mywrite;
     transport.readable = uart_myreadable;
     transport.writeable = uart_mywriteable;
+    printf("telemetry data structure initialized!\n");
     init_telemetry(&transport);
+    vTaskDelete(NULL);
 }
