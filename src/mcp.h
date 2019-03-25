@@ -1,1 +1,1 @@
-void mcpwm_example_config(void);
+void mcpwm_example_config(void* pv);
