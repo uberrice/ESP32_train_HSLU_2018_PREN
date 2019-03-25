@@ -13,6 +13,7 @@ const int uart_num = USED_UART_NUM;
 //The other ports are labelled as RX and TX
 
 void ser_init(void){
+    // TODO: System uses UART0 for USB Comm - change this to another UART port!
     uart_config_t uart_config = {
     .baud_rate = SER_BAUDRATE,
     .data_bits = UART_DATA_8_BITS,
