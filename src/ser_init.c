@@ -54,5 +54,6 @@ void tel_init(void* pv){
     transport.writeable = uart_mywriteable;
     printf("telemetry data structure initialized!\n");
     init_telemetry(&transport);
+    printf("Exiting telemetry initialization!\n");
     vTaskDelete(NULL);
 }

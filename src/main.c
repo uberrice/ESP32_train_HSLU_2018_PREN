@@ -68,7 +68,8 @@ void ramp_task(void *pvParameter)
 uint16_t ctr = 0;
 void helloSender(void *pvParameter){
     publish_u16("helloWorldTopic",ctr);
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    printf("sent hello world!\n");
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     ctr++;
 }
 
