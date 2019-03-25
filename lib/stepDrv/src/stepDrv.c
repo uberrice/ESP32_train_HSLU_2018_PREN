@@ -7,7 +7,6 @@
 
 void setupTimerTask(void* pv){
 
-
 }
 
 void startTimerForStepsTask(void* pv){
@@ -15,5 +14,5 @@ void startTimerForStepsTask(void* pv){
 }
 
 void timerEnable(void){
-
+    
 }

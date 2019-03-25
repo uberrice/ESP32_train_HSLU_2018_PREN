@@ -83,7 +83,7 @@ void teleUpdateTask(void *pvParameter){
 }
 
 void timerInitTask(void* pv){
-    timerInit(TIMER_0);
+    timerInit(TIMER_GROUP_0,TIMER_0);
     printf("Timer initialized\n");
     double* timerval = malloc(sizeof(double));
     while(1){

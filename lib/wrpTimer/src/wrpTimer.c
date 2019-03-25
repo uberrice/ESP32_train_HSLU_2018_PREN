@@ -2,6 +2,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/gpio.h"
+#include "sdkconfig.h"
 #include "wrpTimer.h"
 #include "driver/periph_ctrl.h"
 typedef struct {
@@ -11,7 +12,7 @@ typedef struct {
     uint64_t timer_counter_value;
 } timer_event_t;
 
-void timerInit(int timer_idx){
+void timerInit(timer_group_t tGroup, timer_idx_t tVal){
     timer_config_t config;
     config.divider = TIMER_DIVIDER;
     config.counter_dir = TIMER_COUNT_UP;
@@ -19,8 +20,32 @@ void timerInit(int timer_idx){
     config.alarm_en = TIMER_ALARM_EN;
     config.intr_type = TIMER_INTR_LEVEL;
     config.auto_reload = 0; //don't autoreload
-    timer_init(TIMER_GROUP_0, timer_idx, &config);
+    timer_init(tGroup, tVal, &config);
 
-    timer_set_counter_value(TIMER_GROUP_0, timer_idx, 0x00000000ULL); // starts timer from 0
-    timer_start(TIMER_GROUP_0, timer_idx); //starts the timer initially
+    timer_set_counter_value(tGroup, tVal, 0x00000000ULL); // starts timer from 0
+    timer_start(tGroup, tVal); //starts the timer initially
+}
+
+void tTriggerInUs(uint32_t micros, timer_group_t tGroup, timer_idx_t tVal){
+    uint64_t* counter_old = malloc(sizeof(uint64_t));
+    timer_get_counter_value(tGroup,tVal,counter_old);
+    uint64_t counter_add = (micros * TIMER_SCALE) / 1000;
+    timer_set_alarm_value(tGroup, tVal, *counter_old+counter_add);
+    free(counter_old);
+}
+
+void tTriggerInMs(uint16_t millis, timer_group_t tGroup, timer_idx_t tVal){
+    uint64_t* counter_old = malloc(sizeof(uint64_t));
+    timer_get_counter_value(tGroup,tVal,counter_old);
+    uint64_t counter_add = millis * TIMER_SCALE;
+    timer_set_alarm_value(tGroup, tVal, *counter_old+counter_add);
+    free(counter_old);
+}
+
+void tEnableAlarm(timer_group_t tGroup, timer_idx_t tVal){
+    timer_set_alarm(tGroup, tVal, TIMER_ALARM_EN);
+}
+
+void tDisableAlarm(timer_group_t tGroup, timer_idx_t tVal){
+    timer_set_alarm(tGroup, tVal, TIMER_ALARM_DIS);
 }
