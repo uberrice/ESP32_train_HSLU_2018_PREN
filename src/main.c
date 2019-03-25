@@ -85,11 +85,11 @@ void teleUpdateTask(void *pvParameter){
 void timerInitTask(void* pv){
     timerInit(TIMER_GROUP_0,TIMER_0);
     printf("Timer initialized\n");
-    double* timerval = malloc(sizeof(double));
+    double timerval = 0;
     while(1){
         vTaskDelay(5000 / portTICK_PERIOD_MS);
-        timer_get_counter_time_sec(TIMER_GROUP_0,TIMER_0,timerval);
-        printf("current time value: %lf\n",*timerval);
+        timer_get_counter_time_sec(TIMER_GROUP_0,TIMER_0,&timerval);
+        printf("current time value: %lf\n",timerval);
     }
 }
 

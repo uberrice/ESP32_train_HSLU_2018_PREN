@@ -27,19 +27,17 @@ void timerInit(timer_group_t tGroup, timer_idx_t tVal){
 }
 
 void tTriggerInUs(uint32_t micros, timer_group_t tGroup, timer_idx_t tVal){
-    uint64_t* counter_old = malloc(sizeof(uint64_t));
-    timer_get_counter_value(tGroup,tVal,counter_old);
+    uint64_t counter_old = 0;
+    timer_get_counter_value(tGroup,tVal,&counter_old);
     uint64_t counter_add = (micros * TIMER_SCALE) / 1000;
-    timer_set_alarm_value(tGroup, tVal, *counter_old+counter_add);
-    free(counter_old);
+    timer_set_alarm_value(tGroup, tVal, counter_old+counter_add);
 }
 
 void tTriggerInMs(uint16_t millis, timer_group_t tGroup, timer_idx_t tVal){
-    uint64_t* counter_old = malloc(sizeof(uint64_t));
-    timer_get_counter_value(tGroup,tVal,counter_old);
+    uint64_t counter_old = 0;
+    timer_get_counter_value(tGroup,tVal,&counter_old);
     uint64_t counter_add = millis * TIMER_SCALE;
-    timer_set_alarm_value(tGroup, tVal, *counter_old+counter_add);
-    free(counter_old);
+    timer_set_alarm_value(tGroup, tVal, counter_old+counter_add);
 }
 
 void tEnableAlarm(timer_group_t tGroup, timer_idx_t tVal){
