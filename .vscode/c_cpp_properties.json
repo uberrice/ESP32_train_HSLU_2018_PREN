@@ -100,6 +100,7 @@
                 "C:/Users/uberr/.platformio/packages/framework-espidf/components/wpa_supplicant/include",
                 "C:/Users/uberr/.platformio/packages/framework-espidf/components/wpa_supplicant/port/include",
                 "C:/Users/uberr/.platformio/packages/framework-espidf/components/xtensa-debug-module/include",
+                "c:/Users/uberr/Documents/pioESPtest/lib/motCntrl/src",
                 "C:/Users/uberr/.platformio/packages/tool-unity",
                 "c:/Users/uberr/Documents/pioESPtest/include",
                 ""
@@ -204,6 +205,7 @@
                     "C:/Users/uberr/.platformio/packages/framework-espidf/components/wpa_supplicant/include",
                     "C:/Users/uberr/.platformio/packages/framework-espidf/components/wpa_supplicant/port/include",
                     "C:/Users/uberr/.platformio/packages/framework-espidf/components/xtensa-debug-module/include",
+                    "c:/Users/uberr/Documents/pioESPtest/lib/motCntrl/src",
                     "C:/Users/uberr/.platformio/packages/tool-unity",
                     "c:/Users/uberr/Documents/pioESPtest/include",
                     ""
