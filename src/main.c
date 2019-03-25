@@ -11,7 +11,7 @@
 #include "freertos/task.h"
 #include "driver/gpio.h"
 #include "sdkconfig.h"
-#include "mcp.h"
+#include <mcp.h>
 #include "driver/mcpwm.h"
 #include "ser_init.h"
 #include "telemetry/headers/telemetry_core.h"
