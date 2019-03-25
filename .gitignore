@@ -3,5 +3,5 @@
 .pio
 .pioenvs
 .piolibdeps
-#/.vscode/ipch
-#/.vscode/*.DB*
+/.vscode/ipch
+/.vscode/*.DB*
