@@ -1,5 +1,7 @@
+#Gitignore with changes to come, possibly! Still trying to figure out things
+
 .pio
 .pioenvs
 .piolibdeps
-/.vscode/
-!/.vscode/*.json
+#/.vscode/ipch
+#/.vscode/*.DB*
