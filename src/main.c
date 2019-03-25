@@ -14,6 +14,7 @@
 #include "driver/mcpwm.h"
 #include "ser_init.h"
 #include "telemetry/headers/telemetry_core.h"
+#include <wrpTimer.h>
 
 //Defines the pin which should blink for the blink task
 #define BLINK_GPIO 2
@@ -81,15 +82,26 @@ void teleUpdateTask(void *pvParameter){
 
 }
 
+void timerInitTask(void* pv){
+    timerInit(TIMER_0);
+    printf("Timer initialized\n");
+    double* timerval = malloc(sizeof(double));
+    while(1){
+        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        timer_get_counter_time_sec(TIMER_GROUP_0,TIMER_0,timerval);
+        printf("current time value: %lf\n",*timerval);
+    }
+}
+
 
 void app_main()
 {
     //Setup Code, Initialization of components
     //tel_init();
     printf("\ntesting functionality\n");
-    xTaskCreate(tel_init,"tel_init",4096, NULL, 5, NULL);
+    //xTaskCreate(tel_init,"tel_init",4096, NULL, 5, NULL);
     xTaskCreate(mcpwm_example_config,"mcpwmconf", 4096, NULL, 5, NULL);
-
+    xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
     //Creating tasks for the RTOS to run
 
     //xTaskCreate(mcpwm_example_config, "mcpwm_example_config", 4096, NULL, 5, NULL);
