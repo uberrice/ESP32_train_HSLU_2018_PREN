@@ -39,11 +39,3 @@ void tTriggerInMs(uint16_t millis, timer_group_t tGroup, timer_idx_t tVal){
     uint64_t counter_add = millis * TIMER_SCALE;
     timer_set_alarm_value(tGroup, tVal, counter_old+counter_add);
 }
-
-void tEnableAlarm(timer_group_t tGroup, timer_idx_t tVal){
-    timer_set_alarm(tGroup, tVal, TIMER_ALARM_EN);
-}
-
-void tDisableAlarm(timer_group_t tGroup, timer_idx_t tVal){
-    timer_set_alarm(tGroup, tVal, TIMER_ALARM_DIS);
-}
