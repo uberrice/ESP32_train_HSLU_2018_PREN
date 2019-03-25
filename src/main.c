@@ -1,11 +1,10 @@
-/* Blink Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
+/*  PREN Projekt "Selbstfahrender Zug"
+    Peter Allenspach, Cyrill Durrer
+    verwendete Libraries mit Lizenzen:
+        telemetry von https://github.com/Overdrivr, verteilt unter der MIT-Lizenz
 */
+
+
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -16,9 +15,7 @@
 #include "ser_init.h"
 #include "telemetry/headers/telemetry_core.h"
 
-/* Can run 'make menuconfig' to choose the GPIO to blink,
-   or you can edit the following line and set a number here.
-*/
+//Defines the pin which should blink for the blink task
 #define BLINK_GPIO 2
 
 void blink_task(void *pvParameter)
