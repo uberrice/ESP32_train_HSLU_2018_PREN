@@ -15,6 +15,9 @@
 #include "ser_init.h"
 #include "telemetry/headers/telemetry_core.h"
 #include <wrpTimer.h>
+#include "esp_types.h"
+#include "driver/periph_ctrl.h"
+#include "soc/timer_group_struct.h"
 
 //Defines the pin which should blink for the blink task
 #define BLINK_GPIO 2
@@ -81,16 +84,59 @@ void teleUpdateTask(void *pvParameter){
     }
 
 }
+int intset = 0;
+void IRAM_ATTR timer_group0_isr(void *para){
+    clearIntFlag00();
+    // TIMERG0.int_clr_timers.t0 = 1;
+
+    int timer_idx = (int) para;
+    TIMERG0.hw_timer[timer_idx].update = 1;
+    intset++;
+    if(intset<100000){
+    tTriggerInUs(10, TIMER_GROUP_0,TIMER_0);
+    TIMERG0.hw_timer[timer_idx].config.alarm_en = TIMER_ALARM_EN;
+    }
+}
+
+void timerAlarmSet(void){
+    //timer_isr_register(TIMER_GROUP_0,TIMER_0,t00isr,(void*)TIMER_0,ESP_INTR_FLAG_IRAM,NULL);
+    timerInit00();
+    tEnableAlarm00();
+    tInterruptEnable00();
+    timer_isr_register(TIMER_GROUP_0,TIMER_0,timer_group0_isr,(void*)TIMER_0,ESP_INTR_FLAG_IRAM,NULL);
+    //tTriggerinMs00(1000);
+}
+
+void tTestAlarmSet(void){
+    timer_config_t config;
+    config.divider = TIMER_DIVIDER;
+    config.counter_dir = TIMER_COUNT_UP;
+    config.counter_en = TIMER_PAUSE;
+    config.alarm_en = TIMER_ALARM_EN;
+    config.intr_type = TIMER_INTR_LEVEL;
+    config.auto_reload = 0;
+    timer_init(TIMER_GROUP_0, TIMER_0, &config);
+
+    /* Timer's counter will initially start from value below.
+       Also, if auto_reload is set, this value will be automatically reload on alarm */
+    timer_set_counter_value(TIMER_GROUP_0, TIMER_0, 0x00000000ULL);
+
+    /* Configure the alarm value and the interrupt on alarm. */
+    tTriggerinMs00(1);
+    timer_enable_intr(TIMER_GROUP_0, TIMER_0);
+    timer_isr_register(TIMER_GROUP_0, TIMER_0, timer_group0_isr, (void *) TIMER_0, ESP_INTR_FLAG_IRAM, NULL);
+
+    timer_start(TIMER_GROUP_0, TIMER_0);
+}
 
 void timerInitTask(void* pv){
     //timerInit(TIMER_GROUP_0,TIMER_0);
-    timerInit00();
     printf("Timer initialized\n");
     double timerval = 0;
     while(1){
-        vTaskDelay(5000 / portTICK_PERIOD_MS);
         timer_get_counter_time_sec(TIMER_GROUP_0,TIMER_0,&timerval);
-        printf("current time value: %lf\n",timerval);
+        printf("current time value: %lf %i\n",timerval,intset);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 }
 
@@ -99,15 +145,21 @@ void app_main()
 {
     //Setup Code, Initialization of components
     //tel_init();
-    printf("\ntesting functionality\n");
+    //printf("\ntesting functionality\n");
+    // timerAlarmSet();
+    tTestAlarmSet();
+    printf("timer alarm set\n");
+
     //xTaskCreate(tel_init,"tel_init",4096, NULL, 5, NULL);
+
+
     xTaskCreate(mcpwm_example_config,"mcpwmconf", 4096, NULL, 5, NULL);
     xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
-    //Creating tasks for the RTOS to run
-
-    //xTaskCreate(mcpwm_example_config, "mcpwm_example_config", 4096, NULL, 5, NULL);
     xTaskCreate(blink_task, "blink_task", 4096, NULL, 5, NULL); //blinks on port 2
     xTaskCreate(ramp_task, "ramp_task", 4096, NULL, 5, NULL); //Ramps the MCPWM up and down
+
+
+
     //xTaskCreate(helloSender, "helloSender", 4096, NULL, 5, NULL); //sends an incrementing number on topic helloWorldTopic every 500ms
     //xTaskCreate(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL); //Calls the update_telemetry function as often as possible
 
