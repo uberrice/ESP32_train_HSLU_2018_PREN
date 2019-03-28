@@ -197,7 +197,7 @@ static void IRAM_ATTR isr_handler()
 /**
  * @brief Configure whole MCPWM module
  */
-void mcpwm_example_config(void* pv)
+void mcpwm_example_config()
 {
     //1. mcpwm gpio initialization
     mcpwm_example_gpio_initialize();

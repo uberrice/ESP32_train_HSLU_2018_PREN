@@ -3,7 +3,7 @@
 
 
 #include "pindef.h"
-void mcpwm_example_config(void* pv);
+void mcpwm_example_config();
 
 
 #endif
