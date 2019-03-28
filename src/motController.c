@@ -6,7 +6,6 @@
 #include <wrpTimer.h>
 #include "driver/timer.h"
 #include "driver/mcpwm.h"
-
 #include "motController.h"
 
 static double period = 0;
@@ -26,7 +25,7 @@ void setRPM(int16_t rpm){
 // TODO: set this up for the MC_SENSE pin to trigger on rising edge!
 void myISR(void){
     double newtime;
-    timer_get_counter_time_sec(USEDTIMERG,USEDTIMER,&newtime);
+    timer_get_counter_time_sec(C_TIMERG,C_TIMER,&newtime);
     period = newtime - oldtime;
     oldtime = newtime;
 }
@@ -40,6 +39,12 @@ void motCntrlTask(void* pv){
         currentRPM = period * PERIOD_IN_RPM;
         rpmDiff = sysRPM - currentRPM;
 
+        if(rpmDiff > RPM_TOLERANCE){
+            if(dCycle < (100-DUTY_STEP)) dCycle+=DUTY_STEP;
+        } else if(rpmDiff < -RPM_TOLERANCE)
+        {
+            if(dCycle > DUTY_STEP) dCycle-=DUTY_STEP;
+        }
         mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,dCycle);
         vTaskDelay(100 / portTICK_PERIOD_MS)
     }

@@ -22,11 +22,11 @@ void tTriggerInMs(uint16_t millis, timer_group_t tGroup, timer_idx_t tVal);
 #define tTriggerInMsXX(millis,grp,tmr)      tTriggerInMs(millis,TIMER_GROUP_##grp,TIMER_##tmr)
 #define tTriggerinMs00(millis)              tTriggerInMsXX(millis,0,0)
 
-#define tEnableAlarmXX(grp,tmr)              timer_set_alarm(grp,tmr,TIMER_ALARM_EN)
-#define tEnableAlarm00()              tEnableAlarmXX(0,0)
+#define tEnableAlarmXX(grp,tmr)             timer_set_alarm(grp,tmr,TIMER_ALARM_EN)
+#define tEnableAlarm00()                    tEnableAlarmXX(0,0)
 
 #define tDisableAlarmXX(grp,tmr)            timer_set_alarm(grp,tmr,TIMER_ALARM_DIS)
-#define tDisableAlarm00()            tDisableAlarmXX(0,0)
+#define tDisableAlarm00()                   tDisableAlarmXX(0,0)
 
 #define tStartXX(grp,tmr)                   timer_start(TIMER_GROUP_##grp,TIMER_##tmr)
 #define tStart00()                          tStartXX(0,0)

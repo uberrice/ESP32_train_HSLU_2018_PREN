@@ -1,4 +1,5 @@
-
+#ifndef SER_INIT_H_
+#define SER_INIT_H_
 
 #include "pindef.h"
 #define USED_UART_NUM UART_NUM_1
@@ -7,3 +8,5 @@
 #define SER_BAUDRATE 115200
 
 void tel_init(void* pv);
+
+#endif
