@@ -1,0 +1,21 @@
+#ifndef MOTCONTROLLER_H
+#define MOTCONTROLLER_H
+
+#include "pindef.h"
+
+#define MC_PWMPIN       P_MOTORPWM
+#define MC_SENSE        P_MOTORSENSE
+
+#define USEDTIMERG      TIMER_GROUP_0
+#define USEDTIMER       TIMER_0
+
+#define C_MCPWMUNIT     MCPWM_UNIT_0
+#define C_MCPWMTIMER    MCPWM_TIMER_0
+
+#define STEPS_PER_REV   12
+#define PERIOD_IN_RPM   (60*STEPS_PER_REV)
+#define RPM_IN_PERIOD   (1/PERIOD_IN_RPM)
+
+
+
+#endif //MOTCONTROLLER_H

@@ -38,7 +38,8 @@
 #define CAP2_INT_EN BIT(29)  //Capture 2 interrupt bit
 
 
-#define GPIO_PWM0A_OUT 19   //Set GPIO 19 as PWM0A
+#define GPIO_PWM0A_OUT P_MOTORPWM   //Set GPIO 19 as PWM0A
+/*
 #define GPIO_PWM0B_OUT 18   //Set GPIO 18 as PWM0B
 #define GPIO_PWM1A_OUT 17   //Set GPIO 17 as PWM1A
 #define GPIO_PWM1B_OUT 16   //Set GPIO 16 as PWM1B
@@ -53,7 +54,7 @@
 #define GPIO_FAULT0_IN 32   //Set GPIO 32 as FAULT0
 #define GPIO_FAULT1_IN 34   //Set GPIO 34 as FAULT1
 #define GPIO_FAULT2_IN 34   //Set GPIO 34 as FAULT2
-
+*/
 typedef struct {
     uint32_t capture_signal;
     mcpwm_capture_signal_t sel_cap_signal;
@@ -86,8 +87,8 @@ static void mcpwm_example_gpio_initialize()
 #else
     mcpwm_pin_config_t pin_config = {
         .mcpwm0a_out_num = GPIO_PWM0A_OUT,
-        .mcpwm0b_out_num = GPIO_PWM0B_OUT,
-        /* .mcpwm1a_out_num = GPIO_PWM1A_OUT,
+        /*.mcpwm0b_out_num = GPIO_PWM0B_OUT,
+        .mcpwm1a_out_num = GPIO_PWM1A_OUT,
         .mcpwm1b_out_num = GPIO_PWM1B_OUT,
         .mcpwm2a_out_num = GPIO_PWM2A_OUT,
         .mcpwm2b_out_num = GPIO_PWM2B_OUT,
@@ -281,5 +282,4 @@ void mcpwm_example_config(void* pv)
     MCPWM[MCPWM_UNIT_0]->int_ena.val = CAP0_INT_EN | CAP1_INT_EN | CAP2_INT_EN;  //Enable interrupt on  CAP0, CAP1 and CAP2 signal
     mcpwm_isr_register(MCPWM_UNIT_0, isr_handler, NULL, ESP_INTR_FLAG_IRAM, NULL);  //Set ISR Handler
 #endif
-    vTaskDelete(NULL);
 }

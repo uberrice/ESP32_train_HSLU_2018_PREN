@@ -10,6 +10,7 @@
 #include "freertos/task.h"
 #include "driver/gpio.h"
 #include "sdkconfig.h"
+
 #include <mcp.h>
 #include "driver/mcpwm.h"
 #include "ser_init.h"
@@ -47,6 +48,7 @@ void ramp_task(void *pvParameter)
 {
     int8_t ramp_cntr = 1;
     bool dir = true;
+    mcpwm_example_config();
     while(1) {
         if(ramp_cntr == 0){
             dir = true;
@@ -140,7 +142,6 @@ void timerInitTask(void* pv){
     }
 }
 
-
 void app_main()
 {
     //Setup Code, Initialization of components
@@ -153,7 +154,6 @@ void app_main()
     //xTaskCreate(tel_init,"tel_init",4096, NULL, 5, NULL);
 
 
-    xTaskCreate(mcpwm_example_config,"mcpwmconf", 4096, NULL, 5, NULL);
     xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
     xTaskCreate(blink_task, "blink_task", 4096, NULL, 5, NULL); //blinks on port 2
     xTaskCreate(ramp_task, "ramp_task", 4096, NULL, 5, NULL); //Ramps the MCPWM up and down
