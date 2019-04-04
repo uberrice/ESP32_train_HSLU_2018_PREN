@@ -19,6 +19,7 @@
 #include "esp_types.h"
 #include "driver/periph_ctrl.h"
 #include "soc/timer_group_struct.h"
+#include <motController.h>
 
 //Defines the pin which should blink for the blink task
 #define BLINK_GPIO 2
@@ -138,6 +139,7 @@ void timerInitTask(void* pv){
     while(1){
         timer_get_counter_time_sec(TIMER_GROUP_0,TIMER_0,&timerval);
         printf("current time value: %lf %i\n",timerval,intset);
+        printf("Rev dist: %f ; Step dist: %f\n", ONEREV_DIST, ONESTEP_DIST);
         vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 }
@@ -155,8 +157,9 @@ void app_main()
 
 
     xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
-    xTaskCreate(blink_task, "blink_task", 4096, NULL, 5, NULL); //blinks on port 2
-    xTaskCreate(ramp_task, "ramp_task", 4096, NULL, 5, NULL); //Ramps the MCPWM up and down
+    xTaskCreate(blink_task, "blink_task", 4096, NULL, 3, NULL); //blinks on port 2
+    // xTaskCreate(ramp_task, "ramp_task", 4096, NULL, 5, NULL); //Ramps the MCPWM up and down
+    xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
 
 
 
