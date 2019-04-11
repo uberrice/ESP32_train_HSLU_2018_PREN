@@ -7,11 +7,15 @@
 #include <wrpTimer.h>
 #include "driver/timer.h"
 #include "driver/mcpwm.h"
+#include "driver/gpio.h"
 #include "motController.h"
+
+#define FLAG_DEBUG (1)
 
 static double period = 10;
 static double oldtime = 0;
 static int32_t targetRPM = 0;
+int32_t intrig = 0;
 
 /**
  * @brief ISR for the MC_SENSE input pin, used to set the time passed since the last trigger
@@ -24,6 +28,7 @@ void IRAM_ATTR senseISR(void* pv){
     timer_get_counter_time_sec(C_TIMERG,C_TIMER,&newtime);
     period = newtime - oldtime;
     oldtime = newtime;
+    intrig++;
 }
 
 
@@ -34,14 +39,13 @@ void IRAM_ATTR senseISR(void* pv){
  */
 static void motorInit(void){
     printf("INITIALIZING MOTOR CONTROL...\n");
-
     //Configure MC_SENSE Interrupt input pin
-    gpio_install_isr_service();
+    gpio_install_isr_service(0);
     gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_POSEDGE;
     io_conf.mode = GPIO_MODE_INPUT;
     io_conf.pin_bit_mask = 1ULL<<MC_SENSE;
-    io_conf.pull_down_en = 0;
+    io_conf.pull_down_en = 1;
     io_conf.pull_up_en = 0;
     gpio_config(&io_conf);
     // gpio_pad_select_gpio(MC_SENSE);
@@ -93,6 +97,7 @@ void motCntrlTask(void* pv){
     pid_control_t* pid = pvPortMalloc(sizeof(pid_control_t));
     pid->kp = (1.0f)/(1500.0f); //experimental KP, assuming 100% duty cycle when doing a 1500RPM jump
     pid->ki = 0.01f; //purely experimental KI, set to 0 to disable
+    targetRPM = 400;
     while(1){
         pid->targetRPM = targetRPM;
         pid->currRPM = PERIOD_IN_RPM(period); // TODO: if it errors, put in conditional that puts current RPM to zero if period is fast enough
@@ -119,7 +124,10 @@ void motCntrlTask(void* pv){
         //adds up the integral error and the current RPM
         pid->prevRPM = pid->currRPM;
         pid->integral += pid->error;
-        vTaskDelay(50 / portTICK_PERIOD_MS);
+        #if FLAG_DEBUG
+        printf("Motor params: pwm: %2f, period: %2f i: %2f, current rpm: %i, target rpm %i, intrig: %i\n", pid->pwm, period, pid->integral, pid->currRPM, pid->targetRPM,intrig);
+        #endif
+        vTaskDelay(500 / portTICK_PERIOD_MS);
     }
     vPortFree(pid);
 }

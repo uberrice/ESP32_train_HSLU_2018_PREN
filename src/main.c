@@ -20,6 +20,8 @@
 #include "driver/periph_ctrl.h"
 #include "soc/timer_group_struct.h"
 #include <motController.h>
+#include "pindef.h"
+#include "driver/gpio.h"
 
 //Defines the pin which should blink for the blink task
 #define BLINK_GPIO 2
@@ -47,23 +49,33 @@ void blink_task(void *pvParameter)
 
 void ramp_task(void *pvParameter)
 {
-    int8_t ramp_cntr = 1;
+    int8_t ramp_cntr = 12;
     bool dir = true;
     mcpwm_example_config();
+    gpio_config_t io_conf;
+    io_conf.intr_type = GPIO_INTR_DISABLE;
+    io_conf.mode = GPIO_MODE_OUTPUT;
+    io_conf.pin_bit_mask = 1ULL<<MC_FORWARD | 1ULL<<MC_REVERSE;
+    io_conf.pull_down_en = 0;
+    io_conf.pull_up_en = 0;
+    gpio_config(&io_conf);
+    MOTOR_FORWARD(); //initially brakes the motor
+
+
     while(1) {
-        if(ramp_cntr == 0){
+        if(ramp_cntr == 10){
             dir = true;
-            printf("Motor dir reversed!\n");
+            printf("Motor dir reversed! at 10\n");
         }
-        if(ramp_cntr == 100){
+        if(ramp_cntr == 30){
             dir = false;
-            printf("Motor dir reversed!\n");
+            printf("Motor dir reversed! at 30\n");
         }
 
 
 
         mcpwm_set_duty(0,0,MCPWM_OPR_A,(float)ramp_cntr);
-        vTaskDelay(50 / portTICK_PERIOD_MS);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
 
         if(dir){
             ramp_cntr++;
@@ -140,7 +152,7 @@ void timerInitTask(void* pv){
         timer_get_counter_time_sec(TIMER_GROUP_0,TIMER_0,&timerval);
         printf("current time value: %lf %i\n",timerval,intset);
         printf("Rev dist: %f ; Step dist: %f\n", ONEREV_DIST, ONESTEP_DIST);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
 }
 
@@ -158,8 +170,8 @@ void app_main()
 
     xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
     xTaskCreate(blink_task, "blink_task", 4096, NULL, 3, NULL); //blinks on port 2
-    // xTaskCreate(ramp_task, "ramp_task", 4096, NULL, 5, NULL); //Ramps the MCPWM up and down
-    xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
+    xTaskCreate(ramp_task, "ramp_task", 4096, NULL, 5, NULL); //Ramps the MCPWM up and down
+    //xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
 
 
 
