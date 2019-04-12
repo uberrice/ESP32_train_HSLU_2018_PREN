@@ -170,8 +170,8 @@ void app_main()
 
     xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
     xTaskCreate(blink_task, "blink_task", 4096, NULL, 3, NULL); //blinks on port 2
-    xTaskCreate(ramp_task, "ramp_task", 4096, NULL, 5, NULL); //Ramps the MCPWM up and down
-    //xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
+    //xTaskCreate(ramp_task, "ramp_task", 4096, NULL, 5, NULL); //Ramps the MCPWM up and down
+     xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
 
 
 

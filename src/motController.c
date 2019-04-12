@@ -25,9 +25,14 @@ int32_t intrig = 0;
  */
 void IRAM_ATTR senseISR(void* pv){
     double newtime;
+    double testime;
     timer_get_counter_time_sec(C_TIMERG,C_TIMER,&newtime);
-    period = newtime - oldtime;
-    oldtime = newtime;
+    testime = newtime - oldtime;
+    if(1){
+        period = testime;
+        oldtime = newtime;
+        
+    }
     intrig++;
 }
 
@@ -92,29 +97,43 @@ int32_t getRPM(void){
  * 
  * @param pv unused
  */
+
+int oldintrig = 0;
+int outputtim = 0;
+int itervar = 0;
 void motCntrlTask(void* pv){
     motorInit();
     pid_control_t* pid = pvPortMalloc(sizeof(pid_control_t));
-    pid->kp = (1.0f)/(1500.0f); //experimental KP, assuming 100% duty cycle when doing a 1500RPM jump
+    pid->kp = (1.0f)/(10.0f); //experimental KP, assuming 100% duty cycle when doing a 1500RPM jump
     pid->ki = 0.01f; //purely experimental KI, set to 0 to disable
-    targetRPM = 400;
+    pid->integral = 0;
+    targetRPM = 800;
     while(1){
         pid->targetRPM = targetRPM;
         pid->currRPM = PERIOD_IN_RPM(period); // TODO: if it errors, put in conditional that puts current RPM to zero if period is fast enough
-        pid->error = pid->currRPM - pid->targetRPM;
+        /*if (pid->currRPM > 500){
+            pid->currRPM = 500;
+        }*/
+        pid->error = pid->targetRPM - pid->currRPM;
 
         pid->pwm = (pid->error * pid->kp) + (pid->integral * pid->ki);
-
+        // pid->pwm = (pid->error * pid->kp);
+        // pid->pwm = 15;
         //Motor direction controller
         if(pid->pwm >= 0.0f){
             //Bounds for PWM
             if(pid->pwm > 100.0f) pid->pwm = 100.0f;
             MOTOR_FORWARD();
-        }else if(pid->pwm < 0.0f){
+        } 
+        else if(pid->pwm < 0.0f){
             //Bounds for PWM
             if(pid->pwm < -100.0f) pid->pwm = -100.0f;
             pid->pwm = -(pid->pwm);
             MOTOR_REVERSE();
+
+            //debug: set pid to 0 if pwm is negative
+            // pid->pwm = 0;
+            // MOTOR_BRAKE();
         }
 
         //Sets the duty cycle for the PWM unit
@@ -125,9 +144,31 @@ void motCntrlTask(void* pv){
         pid->prevRPM = pid->currRPM;
         pid->integral += pid->error;
         #if FLAG_DEBUG
-        printf("Motor params: pwm: %2f, period: %2f i: %2f, current rpm: %i, target rpm %i, intrig: %i\n", pid->pwm, period, pid->integral, pid->currRPM, pid->targetRPM,intrig);
+        outputtim++;
+        if(outputtim == 200){
+            itervar++;
+            printf("Motor params: pwm: %2f, period: %2f error: %i, current rpm: %i, target rpm %i, intrig: %i\n integral: %2f, dist since last: %2f mm\n"
+            , pid->pwm, period, pid->error, pid->currRPM, pid->targetRPM,intrig-oldintrig, pid->integral, ((intrig-oldintrig)*ONESTEP_DIST));
+            oldintrig = intrig;
+            // targetRPM+=100;
+            switch (itervar%3)
+            {
+                case 0:
+                    targetRPM = 1000;
+                    break;
+            
+                case 1:
+                    targetRPM = 0;
+                    break;
+                case 2:
+                    targetRPM = -1000;
+                    break;
+            }
+
+            outputtim=0;
+        }
         #endif
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        vTaskDelay(5 / portTICK_PERIOD_MS);
     }
     vPortFree(pid);
 }
