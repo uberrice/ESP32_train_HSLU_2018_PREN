@@ -104,7 +104,7 @@ int itervar = 0;
 void motCntrlTask(void* pv){
     motorInit();
     pid_control_t* pid = pvPortMalloc(sizeof(pid_control_t));
-    pid->kp = (1.0f)/(10.0f); //experimental KP, assuming 100% duty cycle when doing a 1500RPM jump
+    pid->kp = (1.0f)/(10.0f); //experimental KP, assuming 100% duty cycle when 10RPM off
     pid->ki = 0.01f; //purely experimental KI, set to 0 to disable
     pid->integral = 0;
     targetRPM = 800;

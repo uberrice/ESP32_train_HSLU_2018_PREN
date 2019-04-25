@@ -21,6 +21,8 @@
 #define WHEEL_RADIUS    (21) //in millimetres
 #define ONEREV_DIST     (2.0f*3.14f*WHEEL_RADIUS)
 #define ONESTEP_DIST    (ONEREV_DIST/STEPS_PER_REV)
+#define SPEED_IN_RPM(spd)    (ONEREV_DIST/spd*1000)
+#define RPM_IN_M_S(rpm) (rpm/60 * ONEREV_DIST / 1000)
 
 #define MOTOR_FORWARD() gpio_set_level(MC_FORWARD, 1); gpio_set_level(MC_REVERSE, 0);
 #define MOTOR_REVERSE() gpio_set_level(MC_FORWARD, 0); gpio_set_level(MC_REVERSE, 1);
