@@ -86,16 +86,19 @@ void ramp_task(void *pvParameter)
 }
 uint16_t ctr = 0;
 void helloSender(void *pvParameter){
+    while(1){
+    printf("gonna send hello world");
     publish_u16("helloWorldTopic",ctr);
     printf("sent hello world!\n");
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-    ctr++;
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
+    }
 }
 
 void teleUpdateTask(void *pvParameter){
+    tel_init(NULL);
     while(1){
         update_telemetry();
-        vTaskDelay(100 / portTICK_PERIOD_MS);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 
 }
@@ -172,10 +175,11 @@ void app_main()
     xTaskCreate(blink_task, "blink_task", 4096, NULL, 3, NULL); //blinks on port 2
     //xTaskCreate(ramp_task, "ramp_task", 4096, NULL, 5, NULL); //Ramps the MCPWM up and down
      xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
+    // xTaskCreate(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL);
+    // xTaskCreate(helloSender, "helloSender", 4096, NULL, 5, NULL); //sends an incrementing number on topic helloWorldTopic every 500ms
 
 
 
-    //xTaskCreate(helloSender, "helloSender", 4096, NULL, 5, NULL); //sends an incrementing number on topic helloWorldTopic every 500ms
     //xTaskCreate(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL); //Calls the update_telemetry function as often as possible
 
 }

@@ -18,7 +18,7 @@
 #define PERIOD_IN_RPM(per)   ((60.0f)/(per*STEPS_PER_REV))
 #define DUTY_STEP       (5)
 #define RPM_TOLERANCE   (20)
-#define WHEEL_RADIUS    (21) //in millimetres
+#define WHEEL_RADIUS    (17.5) //in millimetres
 #define ONEREV_DIST     (2.0f*3.14f*WHEEL_RADIUS)
 #define ONESTEP_DIST    (ONEREV_DIST/STEPS_PER_REV)
 #define SPEED_IN_RPM(spd)    (ONEREV_DIST/spd*1000)

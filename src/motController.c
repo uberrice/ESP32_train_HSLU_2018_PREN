@@ -107,7 +107,7 @@ void motCntrlTask(void* pv){
     pid->kp = (1.0f)/(10.0f); //experimental KP, assuming 100% duty cycle when 10RPM off
     pid->ki = 0.01f; //purely experimental KI, set to 0 to disable
     pid->integral = 0;
-    targetRPM = 800;
+    targetRPM = 100;
     while(1){
         pid->targetRPM = targetRPM;
         pid->currRPM = PERIOD_IN_RPM(period); // TODO: if it errors, put in conditional that puts current RPM to zero if period is fast enough
@@ -128,12 +128,13 @@ void motCntrlTask(void* pv){
         else if(pid->pwm < 0.0f){
             //Bounds for PWM
             if(pid->pwm < -100.0f) pid->pwm = -100.0f;
-            pid->pwm = -(pid->pwm);
-            MOTOR_REVERSE();
+
+            // pid->pwm = -(pid->pwm);
+            // MOTOR_REVERSE();
 
             //debug: set pid to 0 if pwm is negative
-            // pid->pwm = 0;
-            // MOTOR_BRAKE();
+            pid->pwm = 0;
+            MOTOR_BRAKE();
         }
 
         //Sets the duty cycle for the PWM unit
@@ -145,26 +146,15 @@ void motCntrlTask(void* pv){
         pid->integral += pid->error;
         #if FLAG_DEBUG
         outputtim++;
-        if(outputtim == 200){
+        if(outputtim == 2){
             itervar++;
             printf("Motor params: pwm: %2f, period: %2f error: %i, current rpm: %i, target rpm %i, intrig: %i\n integral: %2f, dist since last: %2f mm\n"
             , pid->pwm, period, pid->error, pid->currRPM, pid->targetRPM,intrig-oldintrig, pid->integral, ((intrig-oldintrig)*ONESTEP_DIST));
             oldintrig = intrig;
             // targetRPM+=100;
-            switch (itervar%3)
-            {
-                case 0:
-                    targetRPM = 1000;
-                    break;
-            
-                case 1:
-                    targetRPM = 0;
-                    break;
-                case 2:
-                    targetRPM = -1000;
-                    break;
+            if(targetRPM < 1400){
+                targetRPM++;
             }
-
             outputtim=0;
         }
         #endif
