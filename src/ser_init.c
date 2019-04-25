@@ -18,36 +18,43 @@ void ser_init(void){
     .data_bits = UART_DATA_8_BITS,
     .parity = UART_PARITY_DISABLE,
     .stop_bits = UART_STOP_BITS_1,
-    .flow_ctrl = UART_HW_FLOWCTRL_CTS_RTS,
+    .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
     .rx_flow_ctrl_thresh = 122,
     };
     uart_param_config(USED_UART_NUM, &uart_config);
     uart_set_pin(USED_UART_NUM, UART_TX_PIN, UART_RX_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    const int uart_buffer_size = (1024 * 2);
+    QueueHandle_t uart_queue;
+    uart_driver_install(USED_UART_NUM, uart_buffer_size, uart_buffer_size, 10, &uart_queue, 0);
 }
 
 int32_t uart_myread(uint8_t* buf, uint32_t sizeToRead){
+    printf("reading something\n");
     return uart_read_bytes(USED_UART_NUM,buf,sizeToRead,1000);
 }
 
 int32_t uart_mywrite(uint8_t* buf, uint32_t sizeToWrite){
+    printf("writing something\n");
     return uart_write_bytes(USED_UART_NUM,(char*)buf,sizeToWrite);
 }
 
 int32_t uart_myreadable(void){ //adapts uart buffered data length function to return an int32
-    size_t* readable_size;
-    readable_size = malloc(sizeof(size_t));
-    uart_get_buffered_data_len(USED_UART_NUM, readable_size);
-    return (int32_t)(*readable_size);
+printf("readable something\n");
+    int32_t length = 0;
+    uart_get_buffered_data_len(USED_UART_NUM, (size_t*)&length);
+    printf("readable length: %i\n",length);
+    return length;
 }
 
 int32_t uart_mywriteable(void){
+    printf("writable something\n");
+    uart_wait_tx_done(USED_UART_NUM, 100);
     return 0xFFFFFFFF;
 }
-
+TM_transport transport;
 void tel_init(void* pv){
     ser_init();
     printf("serial initialized!\n");
-    TM_transport transport;
     transport.read = uart_myread;
     transport.write = uart_mywrite;
     transport.readable = uart_myreadable;
@@ -55,5 +62,5 @@ void tel_init(void* pv){
     printf("telemetry data structure initialized!\n");
     init_telemetry(&transport);
     printf("Exiting telemetry initialization!\n");
-    vTaskDelete(NULL);
+    //vTaskDelete(NULL);
 }

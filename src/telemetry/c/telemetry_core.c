@@ -3,6 +3,8 @@
 #include "telemetry/headers/crc16.h"
 #include "telemetry/headers/dictionnary.h"
 
+#include <stdio.h>
+
 static TM_state * statePtr;
 static TM_transport * transportPtr;
 static uint8_t incomingBuffer[INCOMING_BUFFER_SIZE];
@@ -136,9 +138,9 @@ void subscribe(void (*callback)(TM_state* s, TM_msg* m), TM_state * s)
 void update_telemetry()
 {
   // If user forgot to define transport by calling init_telemetry, abort
-  if(!transportPtr)
+  if(!transportPtr){
     return;
-
+  }
   uint32_t amount = transportPtr->readable();
   uint32_t i = 0 ;
   for(i = 0 ; i < amount ; i++)
