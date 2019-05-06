@@ -84,13 +84,25 @@ void ramp_task(void *pvParameter)
         }
     }
 }
-uint16_t ctr = 0;
+uint8_t ctr = 0;
+uint8_t county = 0;
 void helloSender(void *pvParameter){
+    // uint16_t county = 0;
+    // attach_u16("count",&county);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    // attach_u8("uint",&county);
+    // attach_u8("uint",&county);
+    // attach_u8("uint",&county);
+    // attach_u8("uint",&county);
+    // attach_u8("uint",&county);
+    attach_u8("uint",&county);
+    county++;
     while(1){
-    printf("gonna send hello world");
-    publish_u16("helloWorldTopic",ctr);
-    printf("sent hello world!\n");
-    vTaskDelay(10000 / portTICK_PERIOD_MS);
+        publish_u8("uint",ctr);
+        //publish_u16("count",ctr);
+        ctr++;
+        printf("sent hello world! County currently: %i\n", county);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
 
@@ -98,7 +110,7 @@ void teleUpdateTask(void *pvParameter){
     tel_init(NULL);
     while(1){
         update_telemetry();
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 
 }
@@ -175,8 +187,9 @@ void app_main()
     xTaskCreate(blink_task, "blink_task", 4096, NULL, 3, NULL); //blinks on port 2
     //xTaskCreate(ramp_task, "ramp_task", 4096, NULL, 5, NULL); //Ramps the MCPWM up and down
      xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
-    // xTaskCreate(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL);
-    // xTaskCreate(helloSender, "helloSender", 4096, NULL, 5, NULL); //sends an incrementing number on topic helloWorldTopic every 500ms
+    xTaskCreate(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL);
+    xTaskCreate(helloSender, "helloSender", 4096, NULL, 5, NULL); //sends an incrementing number on topic helloWorldTopic every 500ms
+    // xTaskCreate(echo_task, "uart_echo_task", 1024, NULL, 10, NULL);
 
 
 

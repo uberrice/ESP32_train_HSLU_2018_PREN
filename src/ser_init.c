@@ -11,8 +11,6 @@
 //Port 22 is RTS, whatever that is
 //The other ports are labelled as RX and TX
 
-void ser_init(void){
-    // TODO: System uses UART0 for USB Comm - change this to another UART port!
     uart_config_t uart_config = {
     .baud_rate = SER_BAUDRATE,
     .data_bits = UART_DATA_8_BITS,
@@ -21,25 +19,31 @@ void ser_init(void){
     .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
     .rx_flow_ctrl_thresh = 122,
     };
+void ser_init(void){
+    // TODO: System uses UART0 for USB Comm - change this to another UART port!
     uart_param_config(USED_UART_NUM, &uart_config);
     uart_set_pin(USED_UART_NUM, UART_TX_PIN, UART_RX_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
     const int uart_buffer_size = (1024 * 2);
-    QueueHandle_t uart_queue;
-    uart_driver_install(USED_UART_NUM, uart_buffer_size, uart_buffer_size, 10, &uart_queue, 0);
+    uart_driver_install(USED_UART_NUM, uart_buffer_size, uart_buffer_size, 10, NULL, 0);
 }
 
 int32_t uart_myread(uint8_t* buf, uint32_t sizeToRead){
-    printf("reading something\n");
-    return uart_read_bytes(USED_UART_NUM,buf,sizeToRead,1000);
+    //printf("reading something\n");
+    uint32_t rec_size = uart_read_bytes(USED_UART_NUM,buf,sizeToRead,1000);
+    // printf("\n");
+    //printf((char*)buf);
+    // printf("\n");
+    return rec_size;
 }
 
 int32_t uart_mywrite(uint8_t* buf, uint32_t sizeToWrite){
-    printf("writing something\n");
+    //printf("writing something\n");
     return uart_write_bytes(USED_UART_NUM,(char*)buf,sizeToWrite);
+    uart_wait_tx_done(USED_UART_NUM, 100);
 }
 
 int32_t uart_myreadable(void){ //adapts uart buffered data length function to return an int32
-printf("readable something\n");
+    //printf("readable something\n");
     int32_t length = 0;
     uart_get_buffered_data_len(USED_UART_NUM, (size_t*)&length);
     printf("readable length: %i\n",length);
@@ -47,7 +51,7 @@ printf("readable something\n");
 }
 
 int32_t uart_mywriteable(void){
-    printf("writable something\n");
+    //printf("writable something\n");
     uart_wait_tx_done(USED_UART_NUM, 100);
     return 0xFFFFFFFF;
 }

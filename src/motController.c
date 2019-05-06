@@ -146,7 +146,7 @@ void motCntrlTask(void* pv){
         pid->integral += pid->error;
         #if FLAG_DEBUG
         outputtim++;
-        if(outputtim == 2){
+        if(outputtim == 200){
             itervar++;
             printf("Motor params: pwm: %2f, period: %2f error: %i, current rpm: %i, target rpm %i, intrig: %i\n integral: %2f, dist since last: %2f mm\n"
             , pid->pwm, period, pid->error, pid->currRPM, pid->targetRPM,intrig-oldintrig, pid->integral, ((intrig-oldintrig)*ONESTEP_DIST));
