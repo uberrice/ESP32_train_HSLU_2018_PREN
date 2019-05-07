@@ -1,4 +1,4 @@
-#include "telemetry/headers/dictionnary.h"
+#include "dictionnary.h"
 #include "stdlib.h"
 #include "stdint.h"
 #include "string.h"

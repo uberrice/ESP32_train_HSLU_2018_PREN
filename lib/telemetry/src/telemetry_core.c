@@ -1,7 +1,7 @@
-#include "telemetry/headers/telemetry_core.h"
-#include "telemetry/headers/framing.h"
-#include "telemetry/headers/crc16.h"
-#include "telemetry/headers/dictionnary.h"
+#include "telemetry_core.h"
+#include "framing.h"
+#include "crc16.h"
+#include "dictionnary.h"
 
 #include <stdio.h>
 

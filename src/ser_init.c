@@ -3,7 +3,7 @@
 #include "freertos/task.h"
 #include "driver/gpio.h"
 #include "sdkconfig.h"
-#include "telemetry/headers/telemetry_core.h"
+#include <telemetry_core.h>
 #include "driver/uart.h"
 #include "ser_init.h"
     
@@ -46,7 +46,7 @@ int32_t uart_myreadable(void){ //adapts uart buffered data length function to re
     //printf("readable something\n");
     int32_t length = 0;
     uart_get_buffered_data_len(USED_UART_NUM, (size_t*)&length);
-    printf("readable length: %i\n",length);
+    //printf("readable length: %i\n",length);
     return length;
 }
 

@@ -14,7 +14,7 @@
 #include <mcp.h>
 #include "driver/mcpwm.h"
 #include "ser_init.h"
-#include "telemetry/headers/telemetry_core.h"
+#include <telemetry_core.h>
 #include <wrpTimer.h>
 #include "esp_types.h"
 #include "driver/periph_ctrl.h"
@@ -23,67 +23,7 @@
 #include "pindef.h"
 #include "driver/gpio.h"
 
-//Defines the pin which should blink for the blink task
-#define BLINK_GPIO 2
 
-void blink_task(void *pvParameter)
-{
-    /* Configure the IOMUX register for pad BLINK_GPIO (some pads are
-       muxed to GPIO on reset already, but some default to other
-       functions and need to be switched to GPIO. Consult the
-       Technical Reference for a list of pads and their default
-       functions.)
-    */
-    gpio_pad_select_gpio(BLINK_GPIO);
-    /* Set the GPIO as a push/pull output */
-    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
-    while(1) {
-        /* Blink off (output low) */
-        gpio_set_level(BLINK_GPIO, 0);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        /* Blink on (output high) */
-        gpio_set_level(BLINK_GPIO, 1);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-    }
-}
-
-void ramp_task(void *pvParameter)
-{
-    int8_t ramp_cntr = 12;
-    bool dir = true;
-    mcpwm_example_config();
-    gpio_config_t io_conf;
-    io_conf.intr_type = GPIO_INTR_DISABLE;
-    io_conf.mode = GPIO_MODE_OUTPUT;
-    io_conf.pin_bit_mask = 1ULL<<MC_FORWARD | 1ULL<<MC_REVERSE;
-    io_conf.pull_down_en = 0;
-    io_conf.pull_up_en = 0;
-    gpio_config(&io_conf);
-    MOTOR_FORWARD(); //initially brakes the motor
-
-
-    while(1) {
-        if(ramp_cntr == 10){
-            dir = true;
-            printf("Motor dir reversed! at 10\n");
-        }
-        if(ramp_cntr == 30){
-            dir = false;
-            printf("Motor dir reversed! at 30\n");
-        }
-
-
-
-        mcpwm_set_duty(0,0,MCPWM_OPR_A,(float)ramp_cntr);
-        vTaskDelay(100 / portTICK_PERIOD_MS);
-
-        if(dir){
-            ramp_cntr++;
-        } else{
-            ramp_cntr--;
-        }
-    }
-}
 uint8_t ctr = 0;
 uint8_t county = 0;
 void helloSender(void *pvParameter){
@@ -95,14 +35,15 @@ void helloSender(void *pvParameter){
     // attach_u8("uint",&county);
     // attach_u8("uint",&county);
     // attach_u8("uint",&county);
-    attach_u8("uint",&county);
+    attach_u8("this is a test of a very long topic",&county);
     county++;
     while(1){
         publish_u8("uint",ctr);
+        publish_u8("this is a test of a very long topic", ctr);
         //publish_u16("count",ctr);
         ctr++;
         printf("sent hello world! County currently: %i\n", county);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
 
@@ -110,7 +51,7 @@ void teleUpdateTask(void *pvParameter){
     tel_init(NULL);
     while(1){
         update_telemetry();
-        vTaskDelay(100 / portTICK_PERIOD_MS);
+        vTaskDelay(1 / portTICK_PERIOD_MS);
     }
 
 }
@@ -173,37 +114,14 @@ void timerInitTask(void* pv){
 
 void app_main()
 {
-    //Setup Code, Initialization of components
-    //tel_init();
-    //printf("\ntesting functionality\n");
-    // timerAlarmSet();
     tTestAlarmSet();
     printf("timer alarm set\n");
 
-    //xTaskCreate(tel_init,"tel_init",4096, NULL, 5, NULL);
-
 
     xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
-    xTaskCreate(blink_task, "blink_task", 4096, NULL, 3, NULL); //blinks on port 2
-    //xTaskCreate(ramp_task, "ramp_task", 4096, NULL, 5, NULL); //Ramps the MCPWM up and down
-     xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
-    xTaskCreate(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL);
-    xTaskCreate(helloSender, "helloSender", 4096, NULL, 5, NULL); //sends an incrementing number on topic helloWorldTopic every 500ms
-    // xTaskCreate(echo_task, "uart_echo_task", 1024, NULL, 10, NULL);
-
-
-
-    //xTaskCreate(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL); //Calls the update_telemetry function as often as possible
+    xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
+    xTaskCreatePinnedToCore(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL, 1);
+    xTaskCreatePinnedToCore(helloSender, "helloSender", 4096, NULL, 5, NULL, 1); //sends an incrementing number on topic helloWorldTopic every 500ms
 
 }
 
-
-
-/* void app_main()
-{
-    printf("Testing MCPWM...\n");
-    cap_queue = xQueueCreate(1, sizeof(capture)); //comment if you don't want to use capture module
-    xTaskCreate(disp_captured_signal, "mcpwm_config", 4096, NULL, 5, NULL);  //comment if you don't want to use capture module
-    xTaskCreate(gpio_test_signal, "gpio_test_signal", 4096, NULL, 5, NULL); //comment if you don't want to use capture module
-    xTaskCreate(mcpwm_example_config, "mcpwm_example_config", 4096, NULL, 5, NULL);
-} */
