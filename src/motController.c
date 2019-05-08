@@ -107,7 +107,7 @@ void motCntrlTask(void* pv){
     pid->kp = (1.0f)/(10.0f); //experimental KP, assuming 100% duty cycle when 10RPM off
     pid->ki = 0.01f; //purely experimental KI, set to 0 to disable
     pid->integral = 0;
-    targetRPM = 100;
+    targetRPM = 100; //CYRILL: Hier werden die target RPM initialisiert
     while(1){
         pid->targetRPM = targetRPM;
         pid->currRPM = PERIOD_IN_RPM(period); // TODO: if it errors, put in conditional that puts current RPM to zero if period is fast enough
@@ -146,13 +146,13 @@ void motCntrlTask(void* pv){
         pid->integral += pid->error;
         #if FLAG_DEBUG
         outputtim++;
-        if(outputtim == 200){
+        if(outputtim == 2){ //CYRILL: Multiplier für tasks hier; 2 -> alle 10 millisekunden; 10 -> alle 50 etc.
             itervar++;
             printf("Motor params: pwm: %2f, period: %2f error: %i, current rpm: %i, target rpm %i, intrig: %i\n integral: %2f, dist since last: %2f mm\n"
             , pid->pwm, period, pid->error, pid->currRPM, pid->targetRPM,intrig-oldintrig, pid->integral, ((intrig-oldintrig)*ONESTEP_DIST));
             oldintrig = intrig;
             // targetRPM+=100;
-            if(targetRPM < 1400){
+            if(targetRPM < 1400){ //CYRILL: Hier werden die RPM höher geschaltet bis sie 1400 erreichen
                 targetRPM++;
             }
             outputtim=0;
