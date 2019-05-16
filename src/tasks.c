@@ -21,9 +21,11 @@
 
 uint8_t ctr = 0;
 uint8_t county = 0;
+extern 
 void helloSender(void *pvParameter){
-    vTaskDelay(100 / portTICK_PERIOD_MS); //delay to allow data structure to initialize
+    vTaskDelay(1000 / portTICK_PERIOD_MS); //delay to allow data structure to initialize
     attach_u8("this is a test of a very long topic",&county);
+    attach_i16("motorrpm",getRPMref());
     county++;
     while(1){
         publish_u8("uint",ctr);
@@ -31,7 +33,7 @@ void helloSender(void *pvParameter){
         //publish_u16("count",ctr);
         ctr++;
         printf("sent hello world! County currently: %i\n", county);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
 }
 
@@ -77,5 +79,29 @@ void timerInitTask(void* pv){
         printf("current time value: %lf %i\n",timerval,intset);
         printf("Rev dist: %f ; Step dist: %f\n", ONEREV_DIST, ONESTEP_DIST);
         vTaskDelay(10000 / portTICK_PERIOD_MS);
+    }
+}
+
+void beepTask(void*pv){
+    int8_t numtobeep = 20;
+    //Configure forward/reverse pins for motor controller
+    gpio_config_t io_conf;
+    io_conf.intr_type = GPIO_INTR_DISABLE;
+    io_conf.mode = GPIO_MODE_OUTPUT;
+    io_conf.pin_bit_mask = 1ULL<<P_BEEPER;
+    io_conf.pull_down_en = 0;
+    io_conf.pull_up_en = 0;
+    gpio_config(&io_conf);
+    vTaskDelay(3000/portTICK_PERIOD_MS);
+    for(;;){
+        if(numtobeep > 0){
+            gpio_set_level(P_BEEPER, 1);
+            vTaskDelay(500/portTICK_PERIOD_MS);
+            gpio_set_level(P_BEEPER, 0);
+            vTaskDelay(500/portTICK_PERIOD_MS);
+            numtobeep--;
+        }else{
+            vTaskDelay(1000/portTICK_PERIOD_MS);
+        }
     }
 }

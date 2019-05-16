@@ -31,6 +31,7 @@
 
 void motCntrlTask(void* pv);
 void setRPM(int16_t rpm);
+int16_t* getRPMref(void);
 
 typedef enum
 {

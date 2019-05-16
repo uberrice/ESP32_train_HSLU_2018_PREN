@@ -19,7 +19,7 @@ void IRAM_ATTR timer_group0_isr(void *para){
     TIMERG0.hw_timer[timer_idx].update = 1;
     intset++;
     if(intset<100000){
-    tTriggerInUs(10, TIMER_GROUP_0,TIMER_0);
+    tTriggerInUs(200, TIMER_GROUP_0,TIMER_0);
     TIMERG0.hw_timer[timer_idx].config.alarm_en = TIMER_ALARM_EN;
     }
 }

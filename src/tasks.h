@@ -6,6 +6,7 @@ void helloSender(void *pvParameter);
 void teleUpdateTask(void *pvParameter);
 void tTestAlarmSet(void);
 void timerInitTask(void* pv);
+void beepTask(void*pv);
 
 
 

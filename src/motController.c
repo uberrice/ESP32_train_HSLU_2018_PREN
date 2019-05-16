@@ -90,6 +90,10 @@ int32_t getRPM(void){
     return PERIOD_IN_RPM(period);
 }
 
+int16_t* getRPMref(void){
+    return (&targetRPM);
+}
+
 
 /**
  * @brief Task intended to be used with FreeRTOS that implements a simple PI-Loop
@@ -108,6 +112,7 @@ void motCntrlTask(void* pv){
     pid->ki = 0.01f; //purely experimental KI, set to 0 to disable
     pid->integral = 0;
     targetRPM = 100; //CYRILL: Hier werden die target RPM initialisiert
+    vTaskDelay(3000/portTICK_PERIOD_MS);
     while(1){
         pid->targetRPM = targetRPM;
         pid->currRPM = PERIOD_IN_RPM(period); // TODO: if it errors, put in conditional that puts current RPM to zero if period is fast enough
