@@ -24,6 +24,8 @@
 
 #include "tasks.h"
 
+#include "cyrill_test.h"
+
 // void timerAlarmSet(void){
 //     //timer_isr_register(TIMER_GROUP_0,TIMER_0,t00isr,(void*)TIMER_0,ESP_INTR_FLAG_IRAM,NULL);
 //     timerInit00();
@@ -39,13 +41,17 @@ void app_main()
     tTestAlarmSet();
     printf("timer alarm set\n");
 
-
-    xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
+    //xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
     // xTaskCreate(tTestAlarmSet,"tTest", 4096, NULL, 5, NULL);
-    xTaskCreate(beepTask,"beepTask", 4096, NULL, 5, NULL);
-    xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
-    xTaskCreate(winchTask, "winchTask", 4096, NULL, 5, NULL);
-    xTaskCreatePinnedToCore(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL, 1);
-    xTaskCreatePinnedToCore(helloSender, "helloSender", 4096, NULL, 5, NULL, 1); //sends an incrementing number on topic helloWorldTopic every 500ms
+    //xTaskCreate(beepTask,"beepTask", 4096, NULL, 5, NULL);
+    //xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
+    //xTaskCreate(winchTask, "winchTask", 4096, NULL, 5, NULL);
+    //xTaskCreatePinnedToCore(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL, 1);
+    //xTaskCreatePinnedToCore(helloSender, "helloSender", 4096, NULL, 5, NULL, 1); //sends an incrementing number on topic helloWorldTopic every 500ms
 
+
+//Code Cyrill
+    xTaskCreate(crane_task, "crane_task", 4096, NULL, 5, NULL);
+    //xTaskCreate(imu_task, "imu_task", 4096, NULL, 5, NULL);
+    //xTaskCreate(tof_task, "tof_task", 4096, NULL, 5, NULL);
 }
