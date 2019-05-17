@@ -8,8 +8,9 @@
 #define P_MOTORREVERSE      (GPIO_NUM_23)
 #define P_UART_TX           (GPIO_NUM_4)
 #define P_UART_RX           (GPIO_NUM_5)
-#define P_BEEPER            (GPIO_NUM_14)
-#define P_WINCHDIR          (GPIO_NUM_15)
+#define P_BEEPER            (GPIO_NUM_2)
+#define P_WINCH             (GPIO_NUM_13)
+#define P_WINCHDIR          (GPIO_NUM_12)
 
 
 #endif

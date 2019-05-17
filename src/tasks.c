@@ -45,6 +45,20 @@ void teleUpdateTask(void *pvParameter){
     }
 }
 
+int intset = 0;
+void IRAM_ATTR timer_group0_isr(void *para){
+    clearIntFlag00();
+    TIMERG0.int_clr_timers.t0 = 1;
+
+    int timer_idx = (int) para;
+    TIMERG0.hw_timer[0].update = 1;
+    intset++;
+    if(intset>0){
+        intset--;
+    }
+        tTriggerInUs(200, TIMER_GROUP_0,TIMER_0);
+        TIMERG0.hw_timer[timer_idx].config.alarm_en = TIMER_ALARM_EN;
+}
 
 void tTestAlarmSet(void){
     timer_config_t config;
@@ -68,9 +82,10 @@ void tTestAlarmSet(void){
     timer_start(TIMER_GROUP_0, TIMER_0);
 }
 
-extern int intset; //from interrupts.c
+//extern int intset; //from interrupts.c
 void timerInitTask(void* pv){
     timerInit(TIMER_GROUP_0,TIMER_0);
+    //tTestAlarmSet();
     printf("Timer initialized\n");
     double timerval = 0;
     while(1){
@@ -81,21 +96,36 @@ void timerInitTask(void* pv){
     }
 }
 
+int32_t winch_steps = 4096;  //how many steps to take
 void winchTask(void* pv){
     gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_DISABLE;
     io_conf.mode = GPIO_MODE_OUTPUT;
-    io_conf.pin_bit_mask = 1ULL<<P_WINCHDIR;
+    io_conf.pin_bit_mask = 1ULL<<P_WINCHDIR | 1ULL<<P_WINCH;
     io_conf.pull_down_en = 0;
     io_conf.pull_up_en = 0;
     gpio_config(&io_conf);
     gpio_set_level(P_WINCHDIR, 1);
-    for(;;){
-        if(true){
-            intset = 1000000;
-        }
 
-        vTaskDelay(10000/portTICK_PERIOD_MS);
+    for(;;){
+        //invert winch for set number of times
+
+        if(winch_steps>0){
+            winch_steps--;
+            gpio_set_level(P_WINCHDIR, 1);
+        } else if(winch_steps<0){
+            winch_steps++;
+            gpio_set_level(P_WINCHDIR, 0);
+        }
+        if(winch_steps==0){
+            //do nothing
+            vTaskDelay(100/portTICK_PERIOD_MS);
+        }else {
+        gpio_set_level(P_WINCH, 1);
+        vTaskDelay(1/portTICK_PERIOD_MS);
+        gpio_set_level(P_WINCH, 0);
+        vTaskDelay(1/portTICK_PERIOD_MS);
+        }
     }
     
 }
@@ -123,4 +153,3 @@ void beepTask(void*pv){
         }
     }
 }
-

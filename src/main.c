@@ -41,6 +41,7 @@ void app_main()
 
 
     xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
+    // xTaskCreate(tTestAlarmSet,"tTest", 4096, NULL, 5, NULL);
     xTaskCreate(beepTask,"beepTask", 4096, NULL, 5, NULL);
     xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
     xTaskCreate(winchTask, "winchTask", 4096, NULL, 5, NULL);
