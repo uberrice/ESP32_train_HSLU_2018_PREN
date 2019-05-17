@@ -10,11 +10,11 @@
 #include "driver/gpio.h"
 #include "motController.h"
 
-#define FLAG_DEBUG (1)
+#define FLAG_DEBUG (0)
 
 static double period = 10;
 static double oldtime = 0;
-static int32_t targetRPM = 0;
+int32_t targetRPM = 0;
 int32_t intrig = 0;
 
 /**
@@ -76,7 +76,7 @@ static void motorInit(void){
  * @brief sets motor target RPM
  * @param rpm RPM which will get set
  * */
-void setRPM(int16_t rpm){
+void setRPM(int32_t rpm){
     targetRPM = rpm;
 }
 
@@ -109,9 +109,9 @@ void motCntrlTask(void* pv){
     motorInit();
     pid_control_t* pid = pvPortMalloc(sizeof(pid_control_t));
     pid->kp = (1.0f)/(10.0f); //experimental KP, assuming 100% duty cycle when 10RPM off
-    pid->ki = 0.01f; //purely experimental KI, set to 0 to disable
+    pid->ki = 0.02f; //purely experimental KI, set to 0 to disable
     pid->integral = 0;
-    targetRPM = 200; //CYRILL: Hier werden die target RPM initialisiert
+    targetRPM = 0; //CYRILL: Hier werden die target RPM initialisiert
     vTaskDelay(3000/portTICK_PERIOD_MS);
     while(1){
         pid->targetRPM = targetRPM;

@@ -15,6 +15,9 @@
 #include "imu.h"
 #include "tof.h"
 #include "pindef.h"
+#include "motController.h"
+
+void init_cyrill(void);
 
 void crane_task(void *pyParameter);
 

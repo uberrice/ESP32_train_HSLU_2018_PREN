@@ -3,6 +3,8 @@
 
 #include "pindef.h"
 
+
+void senseISR(void*);
 #define MC_PWMPIN       P_MOTORPWM
 #define MC_SENSE        P_MOTORSENSE
 #define MC_FORWARD      P_MOTORFORWARD
@@ -30,7 +32,7 @@
 #define MOTOR_COAST()   gpio_set_level(MC_FORWARD, 0); gpio_set_level(MC_REVERSE, 0);
 
 void motCntrlTask(void* pv);
-void setRPM(int16_t rpm);
+void setRPM(int32_t rpm);
 int32_t* getRPMref(void);
 
 typedef enum
