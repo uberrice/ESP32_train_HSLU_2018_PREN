@@ -32,7 +32,7 @@ void helloSender(void *pvParameter){
         //publish_u16("count",ctr);
         ctr++;
         printf("sent hello world! County currently: %i\n", county);
-        vTaskDelay(10000 / portTICK_PERIOD_MS);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
 
@@ -85,7 +85,6 @@ void tTestAlarmSet(void){
 //extern int intset; //from interrupts.c
 void timerInitTask(void* pv){
     timerInit(TIMER_GROUP_0,TIMER_0);
-    //tTestAlarmSet();
     printf("Timer initialized\n");
     double timerval = 0;
     while(1){
