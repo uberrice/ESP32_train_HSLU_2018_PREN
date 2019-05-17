@@ -1,21 +1,28 @@
 #include "cyrill_test.h"
 
+extern int32_t winch_steps;
+
 void crane_task(void *pyParameter)
 {
     crane_init(P_SERVO);
     vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-    while(1)
-    {
-        crane_set_position(CRANE_POSITION_RETRACTED, CRANE_SPEED_SLOW);
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
+    crane_set_position(CRANE_POSITION_EXTENDED, CRANE_SPEED_FAST);
+    winch_steps+=1000;
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    winch_steps-=1000;
 
-        crane_set_position(CRANE_POSITION_EXTENDED, CRANE_SPEED_FAST);
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
+    // while(1)
+    // {
+    //     crane_set_position(CRANE_POSITION_RETRACTED, CRANE_SPEED_SLOW);
+    //     vTaskDelay(2000 / portTICK_PERIOD_MS);
 
-        crane_set_position(CRANE_POSITION_LOCKED, CRANE_SPEED_SLOW);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);   
-    }
+    //     crane_set_position(CRANE_POSITION_EXTENDED, CRANE_SPEED_FAST);
+    //     vTaskDelay(2000 / portTICK_PERIOD_MS);
+
+    //     crane_set_position(CRANE_POSITION_LOCKED, CRANE_SPEED_SLOW);
+    //     vTaskDelay(1000 / portTICK_PERIOD_MS);   
+    // }
 }
 
 void imu_task(void* pyParameter)

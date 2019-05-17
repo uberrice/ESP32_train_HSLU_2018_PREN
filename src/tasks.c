@@ -95,7 +95,7 @@ void timerInitTask(void* pv){
     }
 }
 
-int32_t winch_steps = 4096;  //how many steps to take
+int32_t winch_steps = 0;  //how many steps to take
 void winchTask(void* pv){
     gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_DISABLE;
