@@ -35,12 +35,13 @@ void motCntrlTask(void* pv);
 void setRPM(int32_t rpm);
 int32_t* getRPMref(void);
 
+
 typedef enum
 {
-    forward = 0,
-    reverse
+    FORWARD = 0,
+    REVERSE
 } motDir_t;
-
+void setMotDir(motDir_t t);
 typedef struct {
     int32_t currRPM;
     int32_t prevRPM;
@@ -52,5 +53,6 @@ typedef struct {
     float pwm;
     motDir_t direction;
 } pid_control_t;
+
 
 #endif //MOTCONTROLLER_H

@@ -16,7 +16,12 @@ static double period = 10;
 static double oldtime = 0;
 int32_t targetRPM = 0;
 int32_t intrig = 0;
+motDir_t motdir = REVERSE;
 
+
+void setMotDir(motDir_t t){
+    motdir = t;
+}
 /**
  * @brief ISR for the MC_SENSE input pin, used to set the time passed since the last trigger
  * to a variable.
@@ -35,6 +40,7 @@ void IRAM_ATTR senseISR(void* pv){
     }
     intrig++;
 }
+
 
 
 /**
@@ -109,7 +115,7 @@ void motCntrlTask(void* pv){
     motorInit();
     pid_control_t* pid = pvPortMalloc(sizeof(pid_control_t));
     pid->kp = (1.0f)/(10.0f); //experimental KP, assuming 100% duty cycle when 10RPM off
-    pid->ki = 0.02f; //purely experimental KI, set to 0 to disable
+    pid->ki = 0.04f; //purely experimental KI, set to 0 to disable
     pid->integral = 0;
     targetRPM = 0; //CYRILL: Hier werden die target RPM initialisiert
     vTaskDelay(3000/portTICK_PERIOD_MS);
@@ -128,7 +134,11 @@ void motCntrlTask(void* pv){
         if(pid->pwm >= 0.0f){
             //Bounds for PWM
             if(pid->pwm > 100.0f) pid->pwm = 100.0f;
-            MOTOR_REVERSE();
+            if(motdir == FORWARD){
+                MOTOR_FORWARD();
+            } else{
+                MOTOR_REVERSE();
+            }
         } 
         else if(pid->pwm < 0.0f){
             //Bounds for PWM
@@ -149,6 +159,11 @@ void motCntrlTask(void* pv){
         //adds up the integral error and the current RPM
         pid->prevRPM = pid->currRPM;
         pid->integral += pid->error;
+        double mytime = 0;
+        timer_get_counter_time_sec(C_TIMERG,C_TIMER,&mytime);
+        if((mytime - oldtime) > 0.05){
+            period = 0.05f;
+        }
         #if FLAG_DEBUG
         outputtim++;
         if(outputtim == 200){ //CYRILL: Multiplier für tasks hier; 2 -> alle 10 millisekunden; 10 -> alle 50 etc.

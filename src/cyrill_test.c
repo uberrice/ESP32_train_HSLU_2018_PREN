@@ -1,4 +1,5 @@
 #include "cyrill_test.h"
+#include "motController.h"
 
 #define WINCH_STEPS_MAX 3850
 
@@ -20,6 +21,7 @@ void init_cyrill()
 void crane_task(void *pyParameter)
 {
     int distance=0;
+    setMotDir(REVERSE);
     vTaskDelay(500 / portTICK_PERIOD_MS);
     setRPM(160);
     mark1:
@@ -33,23 +35,25 @@ void crane_task(void *pyParameter)
     if(distance==0||distance>150) goto mark1;
     //MOTOR_BRAKE();
     setRPM(0);
+
+
+
+    vTaskDelay(200 / portTICK_PERIOD_MS);
+    setMotDir(FORWARD);
+    setRPM(200);
     vTaskDelay(500 / portTICK_PERIOD_MS);
-    MOTOR_FORWARD();
-    setRPM(2000);
-    vTaskDelay(50 / portTICK_PERIOD_MS);
-    setRPM(300);
-    vTaskDelay(300 / portTICK_PERIOD_MS);
     setRPM(0);
 
     crane_set_position(CRANE_POSITION_EXTENDED, CRANE_SPEED_FAST);
-    vTaskDelay(2000 / portTICK_PERIOD_MS);
-    MOTOR_REVERSE();
-    setRPM(2000);
-    vTaskDelay(50 / portTICK_PERIOD_MS);
-    setRPM(300);
-    vTaskDelay(1500 / portTICK_PERIOD_MS);
+    vTaskDelay(300 / portTICK_PERIOD_MS);
+    setMotDir(REVERSE);
+    setRPM(150);
+    vTaskDelay(500 / portTICK_PERIOD_MS);
     //MOTOR_BRAKE();
     setRPM(0);
+
+
+
     winch_steps+=WINCH_STEPS_MAX;
     while(winch_steps!=0) vTaskDelay(100 / portTICK_PERIOD_MS);
     vTaskDelay(2000 / portTICK_PERIOD_MS);
