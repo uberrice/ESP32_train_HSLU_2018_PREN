@@ -14,8 +14,25 @@ void init_cyrill()
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     tof_init();
     crane_init(P_SERVO);
-    vTaskDelay(4000 / portTICK_PERIOD_MS);
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
     gpio_set_level(P_LEDRED, 1);
+}
+
+void stop_task(void *pyParameter)
+{
+    int distance=0;
+    setMotDir(REVERSE);
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+    setRPM(150);
+    do
+    {
+        distance=tof_get_average_distance(STOP_SIGNAL_SENSOR,1);
+        vTaskDelay(5 / portTICK_PERIOD_MS);
+    }while(distance==0||distance>110);
+    //MOTOR_BRAKE();
+    setRPM(0);
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
+    vTaskDelete(NULL); 
 }
 
 void crane_task(void *pyParameter)
@@ -28,21 +45,21 @@ void crane_task(void *pyParameter)
     do
     {
         distance=tof_get_average_distance(CUBE_SENSOR,1);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(5 / portTICK_PERIOD_MS);
     }while(distance==0||distance>150);
-    vTaskDelay(10 / portTICK_PERIOD_MS);
-    distance=tof_get_average_distance(CUBE_SENSOR,5);
-    if(distance==0||distance>150) goto mark1;
     //MOTOR_BRAKE();
     setRPM(0);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+    distance=tof_get_average_distance(CUBE_SENSOR,5);
+    if(distance==0||distance>150) goto mark1;
 
 
 
-    vTaskDelay(200 / portTICK_PERIOD_MS);
-    setMotDir(FORWARD);
-    setRPM(200);
-    vTaskDelay(500 / portTICK_PERIOD_MS);
-    setRPM(0);
+    // vTaskDelay(200 / portTICK_PERIOD_MS);
+    // setMotDir(FORWARD);
+    // setRPM(200);
+    // vTaskDelay(500 / portTICK_PERIOD_MS);
+    // setRPM(0);
 
     crane_set_position(CRANE_POSITION_EXTENDED, CRANE_SPEED_FAST);
     vTaskDelay(300 / portTICK_PERIOD_MS);
@@ -63,19 +80,22 @@ void crane_task(void *pyParameter)
     vTaskDelay(2000 / portTICK_PERIOD_MS);
     winch_steps-=WINCH_STEPS_MAX;
     while(winch_steps!=0) vTaskDelay(100 / portTICK_PERIOD_MS);
-    vTaskDelay(10000 / portTICK_PERIOD_MS);
+    crane_set_position(CRANE_POSITION_LOCKED, CRANE_SPEED_SLOW);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    setRPM(150);
+    vTaskDelay(20000 / portTICK_PERIOD_MS);
     vTaskDelete(NULL);          //end task
 
-    while(1)
-    {
-        crane_set_position(CRANE_POSITION_EXTENDED, CRANE_SPEED_FAST);
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
-        winch_steps+=WINCH_STEPS_MAX;
-        while(winch_steps!=0) vTaskDelay(100 / portTICK_PERIOD_MS);
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
-        winch_steps-=WINCH_STEPS_MAX;
-        while(winch_steps!=0) vTaskDelay(100 / portTICK_PERIOD_MS);
-    }
+    // while(1)
+    // {
+    //     crane_set_position(CRANE_POSITION_EXTENDED, CRANE_SPEED_FAST);
+    //     vTaskDelay(2000 / portTICK_PERIOD_MS);
+    //     winch_steps+=WINCH_STEPS_MAX;
+    //     while(winch_steps!=0) vTaskDelay(100 / portTICK_PERIOD_MS);
+    //     vTaskDelay(2000 / portTICK_PERIOD_MS);
+    //     winch_steps-=WINCH_STEPS_MAX;
+    //     while(winch_steps!=0) vTaskDelay(100 / portTICK_PERIOD_MS);
+    // }
 
     // while(1)
     // {
@@ -114,8 +134,8 @@ void tof_task(void* pyParameter)
     tof_init();
     while(1)
     {
-        printf("Cube Sensor: %i  \n",tof_get_average_distance(CUBE_SENSOR,5));
-        //printf("Stop Sensor: %i\n",tof_get_average_distance(STOP_SIGNAL_SENSOR,5));
+        //printf("Cube Sensor: %i  \n",tof_get_average_distance(CUBE_SENSOR,5));
+        printf("Stop Sensor: %i\n",tof_get_average_distance(STOP_SIGNAL_SENSOR,1));
         vTaskDelay(100 / portTICK_RATE_MS);
     }
 }

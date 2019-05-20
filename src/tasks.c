@@ -89,8 +89,8 @@ void timerInitTask(void* pv){
     double timerval = 0;
     while(1){
         timer_get_counter_time_sec(TIMER_GROUP_0,TIMER_0,&timerval);
-        printf("current time value: %lf %i\n",timerval,intset);
-        printf("Rev dist: %f ; Step dist: %f\n", ONEREV_DIST, ONESTEP_DIST);
+        //printf("current time value: %lf %i\n",timerval,intset);
+        //printf("Rev dist: %f ; Step dist: %f\n", ONEREV_DIST, ONESTEP_DIST);
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
