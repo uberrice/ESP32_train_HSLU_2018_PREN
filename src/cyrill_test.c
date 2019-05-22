@@ -23,12 +23,12 @@ void stop_task(void *pyParameter)
     int distance=0;
     setMotDir(REVERSE);
     vTaskDelay(500 / portTICK_PERIOD_MS);
-    setRPM(150);
+    setRPM(200);
     do
     {
         distance=tof_get_average_distance(STOP_SIGNAL_SENSOR,1);
         vTaskDelay(5 / portTICK_PERIOD_MS);
-    }while(distance==0||distance>110);
+    }while(distance==0||distance>160);
     //MOTOR_BRAKE();
     setRPM(0);
     vTaskDelay(10000 / portTICK_PERIOD_MS);
