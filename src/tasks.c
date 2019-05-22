@@ -39,11 +39,17 @@ void helloSender(void *pvParameter){
 
 void teleUpdateTask(void *pvParameter){
     tel_init(NULL);
+
+    //TODO: Register vars to use for communication here
+
+    //
     while(1){
         update_telemetry();
-        vTaskDelay(1 / portTICK_PERIOD_MS);
+        //TODO: Notify tasks whose values were updated with the update values
+        vTaskDelay(1 / portTICK_PERIOD_MS); //TODO: Don't delay but yield
     }
 }
+
 
 int intset = 0;
 void IRAM_ATTR timer_group0_isr(void *para){
@@ -52,7 +58,7 @@ void IRAM_ATTR timer_group0_isr(void *para){
 
     int timer_idx = (int) para;
     TIMERG0.hw_timer[0].update = 1;
-    intset++;
+    //intset++;
     if(intset>0){
         intset--;
     }
@@ -129,8 +135,15 @@ void winchTask(void* pv){
     
 }
 
-void beepTask(void*pv){
-    int8_t numtobeep = 20;
+
+
+/**
+ * @brief Beeps a number of times; defined from the variable "numtobeep"
+ * 
+ * @param pv not used
+ */
+void beepTask(void* pv){
+    int8_t numtobeep = 2;
     //Configure forward/reverse pins for motor controller
     gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_DISABLE;
@@ -149,6 +162,9 @@ void beepTask(void*pv){
             numtobeep--;
         }else{
             vTaskDelay(1000/portTICK_PERIOD_MS);
+            xTaskNotifyWait(0,0,&numtobeep,portMAX_DELAY); //waits to get a new beep value
+            //call with this:
         }
     }
 }
+

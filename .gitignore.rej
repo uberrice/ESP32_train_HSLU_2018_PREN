@@ -1,0 +1,10 @@
+diff a/.gitignore b/.gitignore	(rejected hunks)
+@@ -4,4 +4,5 @@
+ .pioenvs
+ .piolibdeps
+ /.vscode/ipch
+-/.vscode/*.DB*
+\ No newline at end of file
++/.vscode/*.DB*
++/.vscode/settings.json
+\ No newline at end of file
