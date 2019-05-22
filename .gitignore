@@ -5,3 +5,4 @@
 .piolibdeps
 /.vscode/ipch
 /.vscode/*.DB*
+.vscode
