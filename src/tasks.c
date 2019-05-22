@@ -143,7 +143,7 @@ void winchTask(void* pv){
  * @param pv not used
  */
 void beepTask(void* pv){
-    int8_t numtobeep = 2;
+    uint32_t numtobeep = 0;
     //Configure forward/reverse pins for motor controller
     gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_DISABLE;
@@ -156,13 +156,14 @@ void beepTask(void* pv){
     for(;;){
         if(numtobeep > 0){
             gpio_set_level(P_BEEPER, 1);
-            vTaskDelay(500/portTICK_PERIOD_MS);
+            vTaskDelay(100/portTICK_PERIOD_MS);
             gpio_set_level(P_BEEPER, 0);
-            vTaskDelay(500/portTICK_PERIOD_MS);
+            vTaskDelay(100/portTICK_PERIOD_MS);
             numtobeep--;
         }else{
             vTaskDelay(1000/portTICK_PERIOD_MS);
-            xTaskNotifyWait(0,0,&numtobeep,portMAX_DELAY); //waits to get a new beep value
+            xTaskNotifyWait(0xFFFFFFFF,0,&numtobeep,portMAX_DELAY); //waits to get a new beep value
+            printf("received notification value: %i",numtobeep);
             //call with this:
         }
     }

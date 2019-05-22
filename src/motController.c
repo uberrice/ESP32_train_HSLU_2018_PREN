@@ -9,6 +9,7 @@
 #include "driver/mcpwm.h"
 #include "driver/gpio.h"
 #include "motController.h"
+#include "taskhandles.h"
 
 #define FLAG_DEBUG (0)
 
@@ -183,4 +184,44 @@ void motCntrlTask(void* pv){
         vTaskDelay(5 / portTICK_PERIOD_MS);
     }
     vPortFree(pid);
+}
+
+void motStepping(void* pv){
+    motorInit();
+    MOTOR_REVERSE();
+    float d = 10;
+    uint32_t ctr = 0;
+    for(;;){
+        d+=2;
+        ctr++;
+        xTaskNotify(beepHandle,ctr,eSetBits);
+        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,d);
+        vTaskDelay(3000);
+        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,0);
+        vTaskDelay(1000);
+        printf("d is %2f\n",d);
+    }
+}
+
+void motPulse(void* pv){
+    motorInit();
+    MOTOR_REVERSE();
+    float d = 20;
+    for(;;){
+        xTaskNotify(beepHandle,1,eSetBits);
+        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,d);
+        vTaskDelay(50);
+        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,0);
+        vTaskDelay(2000);
+        xTaskNotify(beepHandle,2,eSetBits);
+        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,d);
+        vTaskDelay(100);
+        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,0);
+        vTaskDelay(2000);
+        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,d);
+        xTaskNotify(beepHandle,3,eSetBits);
+        vTaskDelay(200);
+        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,0);
+        vTaskDelay(2000);
+    }
 }

@@ -21,6 +21,7 @@
 #include "soc/timer_group_struct.h"
 #include <motController.h>
 #include "pindef.h"
+#include "motController.h"
 
 #include "tasks.h"
 #include "taskhandles.h"
@@ -44,6 +45,7 @@ void app_main()
 
     //xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
     // xTaskCreate(tTestAlarmSet,"tTest", 4096, NULL, 5, NULL);
+    beepHandle = malloc(sizeof(xTaskHandle));
     xTaskCreate(beepTask,"beepTask", 4096, NULL, 5, &beepHandle);
     // xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
     // xTaskCreate(winchTask, "winchTask", 4096, NULL, 5, NULL);
@@ -55,11 +57,12 @@ void app_main()
 
 
 //Code Cyrill
-    init_cyrill();
-    xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
-    xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
-    xTaskCreate(winchTask, "winchTask", 4096, NULL, 5, NULL);
-    xTaskCreate(crane_task, "crane_task", 4096, NULL, 4, NULL);
+    // init_cyrill();
+    // xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
+    // xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
+    xTaskCreate(motPulse, "motStepTask", 8192, NULL, 5, NULL);
+    // xTaskCreate(winchTask, "winchTask", 4096, NULL, 5, NULL);
+    // xTaskCreate(crane_task, "crane_task", 4096, NULL, 4, NULL);
     //xTaskCreate(imu_task, "imu_task", 4096, NULL, 5, NULL);
     //xTaskCreate(tof_task, "tof_task", 4096, NULL, 5, NULL);
     //xTaskCreate(stop_task, "stop_task", 4096, NULL, 5, NULL);
