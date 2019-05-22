@@ -2,6 +2,7 @@
 #include "motController.h"
 
 #define WINCH_STEPS_MAX 3850
+#define STOP_DISTANCE 95        //95 for black, 75 for white signs
 
 extern int32_t winch_steps;
 
@@ -21,8 +22,23 @@ void init_cyrill()
 void stop_task(void *pyParameter)
 {
     int distance=0;
-    setMotDir(REVERSE);
+    //setMotDir(REVERSE);
     vTaskDelay(500 / portTICK_PERIOD_MS);
+//---
+    //motorInit();
+    MOTOR_REVERSE();
+    float d = 20;
+    do
+    {
+        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,d);
+        vTaskDelay(30);
+        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,0);
+        distance=tof_get_average_distance(STOP_SIGNAL_SENSOR,3);
+        vTaskDelay(50);
+    }while(distance==0||distance>STOP_DISTANCE);
+    gpio_set_level(P_LEDRED, 0);
+    vTaskDelete(NULL); 
+//---
     setRPM(150);
     do
     {
