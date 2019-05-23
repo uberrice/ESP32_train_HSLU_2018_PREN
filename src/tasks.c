@@ -19,6 +19,8 @@
 #include "soc/timer_group_struct.h"
 #include "driver/gpio.h"
 
+extern int32_t targetRPM; //used for telemetry
+
 uint8_t ctr = 0;
 uint8_t county = 0;
 void helloSender(void *pvParameter){

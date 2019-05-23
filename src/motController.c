@@ -17,6 +17,7 @@ static double period = 10;
 static double oldtime = 0;
 int32_t targetRPM = 0;
 int32_t intrig = 0;
+uint8_t controlEnable = 1;
 motDir_t motdir = REVERSE;
 
 
@@ -154,7 +155,11 @@ void motCntrlTask(void* pv){
         }
 
         //Sets the duty cycle for the PWM unit
+        if(controlEnable){
         mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,pid->pwm);
+        } else{
+            pid->integral = 0;
+        }
 
 
         //adds up the integral error and the current RPM
@@ -225,4 +230,13 @@ void motPulse(void* pv){
         // mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,0);
         // vTaskDelay(2000);
     }
+}
+
+void disableMotorControl(void){
+    controlEnable = 0;
+    mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,0);
+}
+
+void enableMotorControl(void){
+    controlEnable = 1;
 }
