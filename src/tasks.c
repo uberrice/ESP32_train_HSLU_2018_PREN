@@ -27,36 +27,43 @@ uint8_t ctr = 0;
 uint8_t county = 0;
 void helloSender(void *pvParameter){
     vTaskDelay(1000 / portTICK_PERIOD_MS); //delay to allow data structure to initialize
-    attach_u8("this is a test of a very long topic",&county);
+    attach_u8("helloworld",&county);
     county++;
     while(1){
-        publish_u8("uint",ctr);
-        publish_u8("this is a test of a very long topic", ctr);
+        //publish_u8("uint",ctr);
+        publish_u8("helloworld", ctr);
         //publish_u16("count",ctr);
         ctr++;
         printf("sent hello world! County currently: %i\n", county);
-        vTaskDelay(100 / portTICK_PERIOD_MS);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
 
-uint8_t block = 0;
+uint8_t cube = 0;
+uint16_t mycnt = 0;
 void teleUpdateTask(void *pvParameter){
     tel_init(NULL);
+    vTaskDelay(pdMS_TO_TICKS(500));
     uint8_t blockFlag = 0;
     //TODO: Register vars to use for communication here
-    attach_u8("startblock",&block);
+    attach_u8("startblock",&cube); //todo: change block to cube
     attach_i32("motorrpm",getRPMref());
     //
     while(1){
         update_telemetry();
         //TODO: Notify tasks whose values were updated with the update values
-        if ((block == 1) && (blockFlag == 0))
+        if ((cube == 1) && (blockFlag == 0))
         {
             xTaskNotify(beepHandle,3,eSetValueWithOverwrite);
             xTaskCreate(crane_task, "crane_task", 4096, NULL, 4, NULL);
             blockFlag = 1;
         }
         
+        mycnt++;
+        if(mycnt>1000){
+            mycnt = 0;
+            printf("cube is currently %i\n",cube);
+        }
         vTaskDelay(1 / portTICK_PERIOD_MS); //TODO: Don't delay but yield
     }
 }
