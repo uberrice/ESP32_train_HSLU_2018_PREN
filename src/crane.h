@@ -7,6 +7,7 @@
 #define CRANE_POSITION_RETRACTED 142    //Crane retracted on board of the train [initial position]
 #define CRANE_POSITION_EXTENDED 50      //Crane extended 90 degrees to the train
 #define CRANE_POSITION_LOCKED 162       //Absolute maximum angle, holding payload in place
+#define CRANE_POSITION_PART_EXTENDED 110       //
 
 #define CRANE_SPEED_FAST 7              //Without payload (extending)
 #define CRANE_SPEED_SLOW 23             //With payload (retracting)

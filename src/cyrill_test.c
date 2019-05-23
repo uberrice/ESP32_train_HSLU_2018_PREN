@@ -1,7 +1,8 @@
 #include "cyrill_test.h"
 #include "motController.h"
 
-#define WINCH_STEPS_MAX 3850
+#define WINCH_STEPS_MAX 4000
+#define WINCH_STEPS_PART 2400
 #define STOP_DISTANCE 95        //95 for black, 75 for white signs
 
 extern int32_t winch_steps;
@@ -84,9 +85,9 @@ void crane_task(void *pyParameter)
 
     crane_set_position(CRANE_POSITION_EXTENDED, CRANE_SPEED_FAST);
     vTaskDelay(300 / portTICK_PERIOD_MS);
-    setMotDir(REVERSE);
+    //setMotDir(REVERSE);
     setRPM(150);
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    vTaskDelay(520 / portTICK_PERIOD_MS);
     //MOTOR_BRAKE();
     setRPM(0);
 
@@ -94,14 +95,23 @@ void crane_task(void *pyParameter)
 
     winch_steps-=WINCH_STEPS_MAX;
     while(winch_steps!=0) vTaskDelay(100 / portTICK_PERIOD_MS);
-    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    vTaskDelay(500 / portTICK_PERIOD_MS);
     crane_set_position(CRANE_POSITION_LOCKED, CRANE_SPEED_SLOW);
-    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     crane_set_position(CRANE_POSITION_RETRACTED, CRANE_SPEED_SLOW);
-    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+    winch_steps+=WINCH_STEPS_PART;
+    while(winch_steps!=0) vTaskDelay(100 / portTICK_PERIOD_MS);
+    crane_set_position(CRANE_POSITION_LOCKED, CRANE_SPEED_SLOW);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    winch_steps-=WINCH_STEPS_PART;
+    while(winch_steps!=0) vTaskDelay(100 / portTICK_PERIOD_MS);
+    crane_set_position(CRANE_POSITION_PART_EXTENDED, CRANE_SPEED_SLOW);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     winch_steps+=WINCH_STEPS_MAX;
     while(winch_steps!=0) vTaskDelay(100 / portTICK_PERIOD_MS);
     crane_set_position(CRANE_POSITION_LOCKED, CRANE_SPEED_SLOW);
+
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     distance=tof_get_average_distance(CUBE_SENSOR,10);
     while(1)
