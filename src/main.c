@@ -59,12 +59,12 @@ void app_main()
 
 //Code Cyrill
     init_cyrill();
-    // xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
-    // xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
-    xTaskCreate(motPulse, "motStepTask", 8192, NULL, 5, NULL);
-    // xTaskCreate(winchTask, "winchTask", 4096, NULL, 5, NULL);
-    // xTaskCreate(crane_task, "crane_task", 4096, NULL, 4, NULL);
+    xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
+    xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
+    //xTaskCreate(motPulse, "motStepTask", 8192, NULL, 5, NULL);
+    xTaskCreate(winchTask, "winchTask", 4096, NULL, 5, NULL);
+    xTaskCreate(crane_task, "crane_task", 4096, NULL, 4, NULL);
     //xTaskCreate(imu_task, "imu_task", 4096, NULL, 5, NULL);
     //xTaskCreate(tof_task, "tof_task", 4096, NULL, 5, NULL);
-    xTaskCreate(stop_task, "stop_task", 4096, NULL, 5, NULL);
+    //xTaskCreate(stop_task, "stop_task", 4096, NULL, 5, NULL);
 }

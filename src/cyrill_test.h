@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <telemetry_core.h>
 //#include "freertos/FreeRTOS.h"
 //#include "freertos/task.h"
 #include "driver/gpio.h"
