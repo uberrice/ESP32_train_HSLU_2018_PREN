@@ -19,13 +19,15 @@
 #include "soc/timer_group_struct.h"
 #include "driver/gpio.h"
 
+#include "cyrill_test.h"
+#include "taskhandles.h"
+
 
 uint8_t ctr = 0;
 uint8_t county = 0;
 void helloSender(void *pvParameter){
     vTaskDelay(1000 / portTICK_PERIOD_MS); //delay to allow data structure to initialize
     attach_u8("this is a test of a very long topic",&county);
-    attach_i32("motorrpm",getRPMref());
     county++;
     while(1){
         publish_u8("uint",ctr);
@@ -37,16 +39,24 @@ void helloSender(void *pvParameter){
     }
 }
 
-
+uint8_t block = 0;
 void teleUpdateTask(void *pvParameter){
     tel_init(NULL);
-
+    uint8_t blockFlag = 0;
     //TODO: Register vars to use for communication here
-
+    attach_u8("startblock",&block);
+    attach_i32("motorrpm",getRPMref());
     //
     while(1){
         update_telemetry();
         //TODO: Notify tasks whose values were updated with the update values
+        if ((block == 1) && (blockFlag == 0))
+        {
+            xTaskNotify(beepHandle,3,eSetValueWithOverwrite);
+            xTaskCreate(crane_task, "crane_task", 4096, NULL, 4, NULL);
+            blockFlag = 1;
+        }
+        
         vTaskDelay(1 / portTICK_PERIOD_MS); //TODO: Don't delay but yield
     }
 }
