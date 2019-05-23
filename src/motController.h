@@ -32,8 +32,12 @@ void senseISR(void*);
 #define MOTOR_COAST()   gpio_set_level(MC_FORWARD, 0); gpio_set_level(MC_REVERSE, 0);
 
 void motCntrlTask(void* pv);
+void motStepping(void* pv);
+void motPulse(void* pv);
 void setRPM(int32_t rpm);
 int32_t* getRPMref(void);
+void disableMotorControl(void);
+void enableMotorControl(void);
 
 
 typedef enum
