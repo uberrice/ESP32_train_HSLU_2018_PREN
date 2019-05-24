@@ -4,6 +4,7 @@
 #define WINCH_STEPS_MAX 4000
 #define WINCH_STEPS_PART 2400
 #define STOP_DISTANCE 95        //95 for black, 75 for white signs
+#define CUBE_DISTANCE 150
 
 extern int32_t winch_steps;
 
@@ -23,11 +24,10 @@ void init_cyrill()
 void stop_task(void *pyParameter)
 {
     int distance=0;
-    //setMotDir(REVERSE);
+    disableMotorControl();              //Using direct PWM control
+    setMotDir(FORWARD);
     vTaskDelay(500 / portTICK_PERIOD_MS);
-//---
-    //motorInit();
-    MOTOR_REVERSE();
+
     float d = 20;
     do
     {
@@ -46,7 +46,6 @@ void stop_task(void *pyParameter)
         distance=tof_get_average_distance(STOP_SIGNAL_SENSOR,1);
         vTaskDelay(5 / portTICK_PERIOD_MS);
     }while(distance==0||distance>160);
-    //MOTOR_BRAKE();
     setRPM(0);
     while(1)
     {
@@ -60,7 +59,7 @@ void stop_task(void *pyParameter)
 void crane_task(void *pyParameter)
 {
     int distance=0;
-    setMotDir(REVERSE);
+    setMotDir(FORWARD);
     vTaskDelay(500 / portTICK_PERIOD_MS);
     setRPM(160);
     mark1:
@@ -69,26 +68,28 @@ void crane_task(void *pyParameter)
         distance=tof_get_average_distance(CUBE_SENSOR,1);
         vTaskDelay(5 / portTICK_PERIOD_MS);
     }while(distance==0||distance>150);
-    //MOTOR_BRAKE();
     setRPM(0);
     vTaskDelay(100 / portTICK_PERIOD_MS);
     distance=tof_get_average_distance(CUBE_SENSOR,5);
-    if(distance==0||distance>150) goto mark1;
-
-
-
-    // vTaskDelay(200 / portTICK_PERIOD_MS);
-    // setMotDir(FORWARD);
-    // setRPM(200);
-    // vTaskDelay(500 / portTICK_PERIOD_MS);
-    // setRPM(0);
+    if(distance==0||distance>CUBE_DISTANCE) goto mark1;
+    disableMotorControl();
+    setMotDir(BACKWARD);
+    float d = 20;
+    do
+    {
+        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,d);
+        vTaskDelay(30);
+        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,0);
+        distance=tof_get_average_distance(STOP_SIGNAL_SENSOR,3);
+        vTaskDelay(50);
+    }while(distance!=0||distance<CUBE_DISTANCE);
+    setMotDir(FORWARD);
+    enableMotorControl();
 
     crane_set_position(CRANE_POSITION_EXTENDED, CRANE_SPEED_FAST);
     vTaskDelay(300 / portTICK_PERIOD_MS);
-    //setMotDir(REVERSE);
     setRPM(150);
     vTaskDelay(520 / portTICK_PERIOD_MS);
-    //MOTOR_BRAKE();
     setRPM(0);
 
 
