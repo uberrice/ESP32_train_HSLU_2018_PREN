@@ -42,6 +42,7 @@ void helloSender(void *pvParameter){
 uint8_t cube = 0;
 uint8_t stopsignal = 0; //1 is white, 2 is black
 uint16_t mycnt = 0;
+uint8_t signalno = 0;
 void teleUpdateTask(void *pvParameter){
     tel_init(NULL);
     vTaskDelay(pdMS_TO_TICKS(500));
@@ -51,6 +52,7 @@ void teleUpdateTask(void *pvParameter){
     attach_u8("startcube",&cube); //todo: change block to cube
     attach_u8("stop",&stopsignal);
     attach_u8("ping",&ping);
+    attach_u8("signal",&signalno);
     attach_i32("motorrpm",getRPMref());
     //
     while(1){
@@ -67,6 +69,10 @@ void teleUpdateTask(void *pvParameter){
             xTaskNotify(beepHandle,2,eSetValueWithOverwrite);
             xTaskCreatePinnedToCore(stop_task, "stop_task", 4096, NULL, 4, NULL,0);
             stopFlag = 1;
+        }
+        if (signalno){
+            xTaskNotify(beepHandle,signalno,eSetValueWithOverwrite);
+            signalno = 0;
         }
         
         mycnt++;

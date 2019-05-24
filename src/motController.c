@@ -25,8 +25,10 @@ void setMotDir(motDir_t t){
     motdir = t;
     if(t == FORWARD){
         MOTOR_FORWARD();
-    } else{
+    } else if(t == BACKWARD){
         MOTOR_BACKWARD();
+    } else{
+        MOTOR_BRAKE();
     }
 }
 /**

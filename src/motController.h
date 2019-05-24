@@ -43,7 +43,8 @@ void enableMotorControl(void);
 typedef enum
 {
     FORWARD = 0,
-    BACKWARD
+    BACKWARD,
+    BRAKE
 } motDir_t;
 void setMotDir(motDir_t t);
 typedef struct {
