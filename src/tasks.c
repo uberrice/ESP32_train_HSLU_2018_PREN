@@ -40,13 +40,16 @@ void helloSender(void *pvParameter){
 }
 
 uint8_t cube = 0;
+uint8_t stopsignal = 0;
 uint16_t mycnt = 0;
 void teleUpdateTask(void *pvParameter){
     tel_init(NULL);
     vTaskDelay(pdMS_TO_TICKS(500));
     uint8_t blockFlag = 0;
+    uint8_t stopFlag = 0;
     //TODO: Register vars to use for communication here
-    attach_u8("startblock",&cube); //todo: change block to cube
+    attach_u8("startcube",&cube); //todo: change block to cube
+    attach_u8("stop",&stopsignal);
     attach_i32("motorrpm",getRPMref());
     //
     while(1){
@@ -57,6 +60,12 @@ void teleUpdateTask(void *pvParameter){
             xTaskNotify(beepHandle,3,eSetValueWithOverwrite);
             xTaskCreate(crane_task, "crane_task", 4096, NULL, 4, NULL);
             blockFlag = 1;
+        }
+        if ((stopsignal == 1) && (stopFlag == 0))
+        {
+            xTaskNotify(beepHandle,2,eSetValueWithOverwrite);
+            xTaskCreate(stop_task, "stop_task", 4096, NULL, 4, NULL);
+            stopFlag = 1;
         }
         
         mycnt++;
