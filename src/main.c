@@ -40,16 +40,10 @@
 
 void app_main()
 {
-    //tTestAlarmSet();
-    //printf("timer alarm set\n");
-
-    //xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
-    // xTaskCreate(tTestAlarmSet,"tTest", 4096, NULL, 5, NULL);
     beepHandle = malloc(sizeof(xTaskHandle));
     xTaskCreate(beepTask,"beepTask", 4096, NULL, 5, &beepHandle);
     motCtrlHandle = malloc(sizeof(xTaskHandle));
-    //xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, &motCtrlHandle);
-    // xTaskCreate(winchTask, "winchTask", 4096, NULL, 5, NULL);
+    xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, &motCtrlHandle);
     xTaskCreatePinnedToCore(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL, 1);
     xTaskCreatePinnedToCore(helloSender, "helloSender", 4096, NULL, 5, NULL, 1); //sends an incrementing number on topic helloWorldTopic every 500ms
 
@@ -60,8 +54,6 @@ void app_main()
 //Code Cyrill
     init_cyrill();
     xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
-    xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
-    //xTaskCreate(motPulse, "motStepTask", 8192, NULL, 5, NULL);
     xTaskCreate(winchTask, "winchTask", 4096, NULL, 5, NULL);
     //xTaskCreate(crane_task, "crane_task", 4096, NULL, 4, NULL);
     //xTaskCreate(imu_task, "imu_task", 4096, NULL, 5, NULL);
