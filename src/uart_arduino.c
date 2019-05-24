@@ -67,7 +67,7 @@ void uart_arduino_init()
     do
     {
         uart_write_bytes(UART_NUM_1, (const char *)"a", 1);                 //Start ToF sensor init on Arduino
-        vTaskDelay(100 / portTICK_RATE_MS);
+        vTaskDelay(500 / portTICK_RATE_MS);
         len = uart_read_bytes(UART_NUM_1, data, BUF_SIZE, 20 / portTICK_RATE_MS);
         if(data[0]=='c') printf("Cube sensor init failed (Arduino)\n");
         else if(data[0]=='s') printf("Stop sensor init failed (Arduino)\n");
