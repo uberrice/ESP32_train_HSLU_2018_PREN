@@ -18,7 +18,7 @@ static double oldtime = 0;
 int32_t targetRPM = 0;
 int32_t intrig = 0;
 uint8_t controlEnable = 1;
-motDir_t motdir = REVERSE;
+motDir_t motdir = BACKWARD;
 
 
 void setMotDir(motDir_t t){
