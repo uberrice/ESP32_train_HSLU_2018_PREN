@@ -140,6 +140,8 @@ void motCntrlTask(void* pv){
         // pid->pwm = (pid->error * pid->kp);
         // pid->pwm = 15;
         //Motor direction controller
+        if(controlEnable){
+
         if(pid->pwm >= 0.0f){
             //Bounds for PWM
             if(pid->pwm > 100.0f) pid->pwm = 100.0f;
@@ -162,7 +164,6 @@ void motCntrlTask(void* pv){
         }
 
         //Sets the duty cycle for the PWM unit
-        if(controlEnable){
         mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,pid->pwm);
         } else{
             pid->integral = 0;
