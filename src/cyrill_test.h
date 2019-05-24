@@ -18,6 +18,9 @@
 #include "pindef.h"
 #include "motController.h"
 
+extern int32_t winch_steps;
+extern uint8_t stopsignal;
+
 void init_cyrill(void);
 
 void stop_task(void *pyParameter);
