@@ -24,7 +24,7 @@ void init_cyrill()
 
 void crane_task(void *pyParameter)
 {
-    init_cyrill();
+    //init_cyrill();
     int distance=0;
     //vTaskDelay(100 / portTICK_PERIOD_MS);
     printf("Mark0\n");
@@ -99,15 +99,16 @@ void crane_task(void *pyParameter)
 void stop_task(void *pyParameter)
 {
     int distance=0;
-    int stop_distance=0;
-    if(stopsignal==1) { stop_distance=STOP_DISTANCE_WHITE; }
-    else { stop_distance=STOP_DISTANCE_BLACK; }
+    //int stop_distance=0;
+    int stop_distance=90;
+    //if(stopsignal==1) { stop_distance=STOP_DISTANCE_WHITE; }
+    //else { stop_distance=STOP_DISTANCE_BLACK; }
     enableMotorControl();               //Using PID-control
     setMotDir(FORWARD);
-    setRPM(160);
+    setRPM(150);
     do
     {
-        distance=tof_get_average_distance(CUBE_SENSOR,1);
+        distance=tof_get_average_distance(STOP_SIGNAL_SENSOR,1);
         vTaskDelay(5 / portTICK_PERIOD_MS);
     }while(distance==0||distance>STOP_DISTANCE_FAR);
     setRPM(0);
