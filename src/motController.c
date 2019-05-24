@@ -23,6 +23,11 @@ motDir_t motdir = REVERSE;
 
 void setMotDir(motDir_t t){
     motdir = t;
+    if(t == FORWARD){
+        MOTOR_FORWARD();
+    } else{
+        MOTOR_BACKWARD();
+    }
 }
 /**
  * @brief ISR for the MC_SENSE input pin, used to set the time passed since the last trigger
@@ -139,7 +144,7 @@ void motCntrlTask(void* pv){
             if(motdir == FORWARD){
                 MOTOR_FORWARD();
             } else{
-                MOTOR_REVERSE();
+                MOTOR_BACKWARD();
             }
         } 
         else if(pid->pwm < 0.0f){
@@ -147,7 +152,7 @@ void motCntrlTask(void* pv){
             if(pid->pwm < -100.0f) pid->pwm = -100.0f;
 
             // pid->pwm = -(pid->pwm);
-            // MOTOR_REVERSE();
+            // MOTOR_BACKWARD();
 
             //debug: set pid to 0 if pwm is negative
             pid->pwm = 0;
@@ -193,7 +198,7 @@ void motCntrlTask(void* pv){
 
 void motStepping(void* pv){
     motorInit();
-    MOTOR_REVERSE();
+    MOTOR_BACKWARD();
     float d = 10;
     uint32_t ctr = 0;
     for(;;){
@@ -210,7 +215,7 @@ void motStepping(void* pv){
 
 void motPulse(void* pv){
     motorInit();
-    MOTOR_REVERSE();
+    MOTOR_BACKWARD();
     float d = 20;
     mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,0);
     for(;;){

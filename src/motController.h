@@ -27,7 +27,7 @@ void senseISR(void*);
 #define RPM_IN_M_S(rpm) (rpm/60 * ONEREV_DIST / 1000)
 
 #define MOTOR_FORWARD() gpio_set_level(MC_FORWARD, 0); gpio_set_level(MC_REVERSE, 1);
-#define MOTOR_REVERSE() gpio_set_level(MC_FORWARD, 1); gpio_set_level(MC_REVERSE, 0);
+#define MOTOR_BACKWARD() gpio_set_level(MC_FORWARD, 1); gpio_set_level(MC_REVERSE, 0);
 #define MOTOR_BRAKE()   gpio_set_level(MC_FORWARD, 1); gpio_set_level(MC_REVERSE, 1);
 #define MOTOR_COAST()   gpio_set_level(MC_FORWARD, 0); gpio_set_level(MC_REVERSE, 0);
 
@@ -43,7 +43,7 @@ void enableMotorControl(void);
 typedef enum
 {
     FORWARD = 0,
-    REVERSE
+    BACKWARD
 } motDir_t;
 void setMotDir(motDir_t t);
 typedef struct {
