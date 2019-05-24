@@ -22,7 +22,7 @@
 #include "cyrill_test.h"
 #include "taskhandles.h"
 
-
+uint8_t ping = 0;
 uint8_t ctr = 0;
 uint8_t county = 0;
 void helloSender(void *pvParameter){
@@ -40,7 +40,7 @@ void helloSender(void *pvParameter){
 }
 
 uint8_t cube = 0;
-uint8_t stopsignal = 0;
+uint8_t stopsignal = 0; //1 is white, 2 is black
 uint16_t mycnt = 0;
 void teleUpdateTask(void *pvParameter){
     tel_init(NULL);
@@ -50,6 +50,7 @@ void teleUpdateTask(void *pvParameter){
     //TODO: Register vars to use for communication here
     attach_u8("startcube",&cube); //todo: change block to cube
     attach_u8("stop",&stopsignal);
+    attach_u8("ping",&ping);
     attach_i32("motorrpm",getRPMref());
     //
     while(1){
@@ -58,13 +59,13 @@ void teleUpdateTask(void *pvParameter){
         if ((cube == 1) && (blockFlag == 0))
         {
             xTaskNotify(beepHandle,3,eSetValueWithOverwrite);
-            xTaskCreate(crane_task, "crane_task", 4096, NULL, 4, NULL);
+            xTaskCreatePinnedToCore(crane_task, "crane_task", 4096, NULL, 4, NULL,0);
             blockFlag = 1;
         }
         if ((stopsignal == 1) && (stopFlag == 0))
         {
             xTaskNotify(beepHandle,2,eSetValueWithOverwrite);
-            xTaskCreate(stop_task, "stop_task", 4096, NULL, 4, NULL);
+            xTaskCreatePinnedToCore(stop_task, "stop_task", 4096, NULL, 4, NULL,0);
             stopFlag = 1;
         }
         
@@ -196,3 +197,12 @@ void beepTask(void* pv){
     }
 }
 
+void pingTask(void* pv){
+    for(;;){
+    if(ping){
+        publish_u8("pong",ping);
+        ping = 0;
+    }
+    vTaskDelay(pdMS_TO_TICKS(100));
+    }
+}

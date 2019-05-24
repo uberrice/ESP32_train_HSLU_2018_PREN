@@ -8,6 +8,7 @@ void tTestAlarmSet(void);
 void timerInitTask(void* pv);
 void beepTask(void*pv);
 void winchTask(void* pv);
+void pingTask(void* pv);
 
 
 
