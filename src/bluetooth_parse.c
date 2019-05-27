@@ -18,7 +18,7 @@ void btParse(char* buf){
     if(strncmp("beep ", buf, sizeof("beep ")-1) == 0){
         ptr = buf + sizeof("beep ") - 1;
         uint32_t b = (uint32_t)abs(atoi(ptr));
-        if(b < 10){
+        if(b < 15){
             printf("beeped %i times \n", b);
             xTaskNotify(beepHandle,b,eSetValueWithOverwrite);
         }
@@ -62,18 +62,19 @@ void btParse(char* buf){
             winch_steps = 0;
         }
     }
+
     if(strncmp("motor ", buf, sizeof("motor ")-1) == 0){
         ptr = buf + sizeof("motor ") - 1;
         if(strncmp("rpm ",ptr,sizeof("rpm ")-1) == 0){
-            ptr = buf + sizeof("rpm ") - 1;
-            int32_t rpm = (int32_t)abs(atoi(ptr));
-            if(0 <= rpm && rpm <= 2000){
-                setRPM(rpm);
-                printf("Motor rpm set to %i",rpm);
+            ptr = ptr + sizeof("rpm ") - 1;
+            int32_t myrpm = (int32_t)atoi(ptr);
+            if(0 <= myrpm && myrpm <= 2000){
+                setRPM(myrpm);
+                printf("Motor rpm set to %i\n",myrpm);
             }
         }
         if(strncmp("dir ",ptr,sizeof("dir ")-1) == 0){
-            ptr = buf + sizeof("dir ") - 1;
+            ptr = ptr + sizeof("dir ") - 1;
             if(strncmp("forward",ptr,sizeof("forward")-1) == 0){
                 setMotDir(FORWARD);
                 printf("Motor direction set to forward\n");
