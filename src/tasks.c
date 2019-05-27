@@ -78,7 +78,8 @@ void teleUpdateTask(void *pvParameter){
         mycnt++;
         if(mycnt>1000){
             mycnt = 0;
-            printf("cube is currently %i\n",cube);
+            //do something every second
+            // printf("cube is currently %i\n",cube);
         }
         vTaskDelay(1 / portTICK_PERIOD_MS); //TODO: Don't delay but yield
     }

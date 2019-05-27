@@ -43,13 +43,16 @@
 void app_main()
 {
     beepHandle = malloc(sizeof(xTaskHandle));
-    xTaskCreate(beepTask,"beepTask", 4096, NULL, 5, &beepHandle);
     cubeHandle = malloc(sizeof(xTaskHandle));
-    // motCtrlHandle = malloc(sizeof(xTaskHandle));
-    // xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, &motCtrlHandle);
-    // xTaskCreate(pingTask,"pingTask",4096, NULL, 4, NULL);
-    //xTaskCreatePinnedToCore(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL, 1);
-    //xTaskCreatePinnedToCore(helloSender, "helloSender", 4096, NULL, 5, NULL, 1); //sends an incrementing number on topic helloWorldTopic every 500ms
+    stopHandle = malloc(sizeof(xTaskHandle));
+    motCtrlHandle = malloc(sizeof(xTaskHandle));
+    xTaskCreate(beepTask,"beepTask", 4096, NULL, 5, &beepHandle);
+    xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, &motCtrlHandle);
+    xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL); //needed for motor control
+    xTaskCreate(winchTask, "winchTask", 4096, NULL, 5, NULL);
+    xTaskCreatePinnedToCore(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL, 1);
+    // xTaskCreatePinnedToCore(helloSender, "helloSender", 4096, NULL, 5, NULL, 1); //sends an incrementing number on topic helloWorldTopic every 500ms
+    xTaskCreate(pingTask,"pingTask",4096, NULL, 4, NULL);
 
 //TODO: Update priorities; teleUpdate should have a relatively low one
 
@@ -57,9 +60,7 @@ void app_main()
 
 //Code Cyrill
     // init_cyrill();
-    // xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
     // xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
-    // xTaskCreate(winchTask, "winchTask", 4096, NULL, 5, NULL);
     // xTaskCreate(crane_task, "crane_task", 4096, NULL, 4, NULL);
     //xTaskCreate(imu_task, "imu_task", 4096, NULL, 5, NULL);
     //xTaskCreate(tof_task, "tof_task", 4096, NULL, 5, NULL);
