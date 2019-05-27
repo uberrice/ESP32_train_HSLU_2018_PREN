@@ -30,5 +30,3 @@ void crane_task(void *pyParameter);
 void imu_task(void* pyParameter);
 
 void tof_task(void* pyParameter);
-
-void test_task(void* pv);

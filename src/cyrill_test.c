@@ -1,6 +1,8 @@
 #include "cyrill_test.h"
 #include "motController.h"
 
+#include "testing.h"
+
 #define WINCH_STEPS_MAX 4000
 #define WINCH_STEPS_PART 2400
 #define STOP_DISTANCE_WHITE 75          //for white signs
@@ -21,49 +23,10 @@ void init_cyrill()
     vTaskDelay(2000 / portTICK_PERIOD_MS);
     gpio_set_level(P_LEDRED, 1);
 }
-typedef enum
-{
-    START,
-    PICKUP,
-    RUN,
-    STOP,
-    STOPPING,
-    DONE
-} mystates_t;
 
-mystates_t currState = START;
-void test_task(void* pv){
-    for(;;){
-    switch(currState){
-        case START:
-            xTaskCreate(crane_task, "crane_task", 4096, NULL, 4, NULL);
-            currState = PICKUP;
-        break;
-        case PICKUP:
-        break;
-        case RUN:
-            enableMotorControl();
-            setMotDir(FORWARD);
-            setRPM(700);
-            vTaskDelay(pdMS_TO_TICKS(23000));
-            setRPM(0);
-            disableMotorControl();
-            setMotDir(BRAKE);
-            vTaskDelay(pdMS_TO_TICKS(3000));
-            currState = STOP;
-        break;
-        case STOP:
-            xTaskCreate(stop_task, "stop_task", 4096, NULL, 5, NULL);
-            currState = STOPPING;
-        break;
-        case STOPPING:
-        break;
-        case DONE:
-        break;
-    }
-    vTaskDelay(pdMS_TO_TICKS(100));
-    }
-}
+
+extern mystates_t currState;
+
 
 void crane_task(void *pyParameter)
 {
