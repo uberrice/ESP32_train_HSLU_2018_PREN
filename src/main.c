@@ -44,6 +44,7 @@ void app_main()
 {
     beepHandle = malloc(sizeof(xTaskHandle));
     xTaskCreate(beepTask,"beepTask", 4096, NULL, 5, &beepHandle);
+    cubeHandle = malloc(sizeof(xTaskHandle));
     // motCtrlHandle = malloc(sizeof(xTaskHandle));
     // xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, &motCtrlHandle);
     // xTaskCreate(pingTask,"pingTask",4096, NULL, 4, NULL);
