@@ -36,14 +36,17 @@ void btParse(char* buf){
     }
 
     if(strncmp("winch ", buf, sizeof("winch ")-1) == 0){
-        ptr = buf + sizeof("winch "-1);
+        ptr = buf + sizeof("winch ") - 1;
         if(strncmp("up",ptr,sizeof("up")-1) == 0){
-            winch_steps = 100000;
+            printf("winch up\n");
+            winch_steps = 4000;
         }
         if(strncmp("down",ptr,sizeof("down")-1) == 0){
-            winch_steps = -100000;
+            printf("winch down\n");
+            winch_steps = -4000;
         }
         if(strncmp("stop",ptr,sizeof("stop")-1) == 0){
+            printf("winch stop\n");
             winch_steps = 0;
         }
     }

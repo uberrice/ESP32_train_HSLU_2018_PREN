@@ -1,0 +1,1 @@
+Used app is BlueTooth Serial Controller for Android
