@@ -3,5 +3,3 @@
 .pio
 .pioenvs
 .piolibdeps
-/.vscode/ipch
-/.vscode/*.DB*
