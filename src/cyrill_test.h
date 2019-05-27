@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <telemetry_core.h>
 //#include "freertos/FreeRTOS.h"
 //#include "freertos/task.h"
 #include "driver/gpio.h"
@@ -17,7 +18,12 @@
 #include "pindef.h"
 #include "motController.h"
 
+extern int32_t winch_steps;
+extern uint8_t stopsignal;
+
 void init_cyrill(void);
+
+void stop_task(void *pyParameter);
 
 void crane_task(void *pyParameter);
 

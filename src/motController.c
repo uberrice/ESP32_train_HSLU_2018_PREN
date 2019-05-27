@@ -9,6 +9,7 @@
 #include "driver/mcpwm.h"
 #include "driver/gpio.h"
 #include "motController.h"
+#include "taskhandles.h"
 
 #define FLAG_DEBUG (0)
 
@@ -16,11 +17,19 @@ static double period = 10;
 static double oldtime = 0;
 int32_t targetRPM = 0;
 int32_t intrig = 0;
-motDir_t motdir = REVERSE;
+uint8_t controlEnable = 0;
+motDir_t motdir = FORWARD;
 
 
 void setMotDir(motDir_t t){
     motdir = t;
+    if(t == FORWARD){
+        MOTOR_FORWARD();
+    } else if(t == BACKWARD){
+        MOTOR_BACKWARD();
+    } else{
+        MOTOR_BRAKE();
+    }
 }
 /**
  * @brief ISR for the MC_SENSE input pin, used to set the time passed since the last trigger
@@ -131,13 +140,15 @@ void motCntrlTask(void* pv){
         // pid->pwm = (pid->error * pid->kp);
         // pid->pwm = 15;
         //Motor direction controller
+        if(controlEnable){
+
         if(pid->pwm >= 0.0f){
             //Bounds for PWM
             if(pid->pwm > 100.0f) pid->pwm = 100.0f;
             if(motdir == FORWARD){
                 MOTOR_FORWARD();
             } else{
-                MOTOR_REVERSE();
+                MOTOR_BACKWARD();
             }
         } 
         else if(pid->pwm < 0.0f){
@@ -145,7 +156,7 @@ void motCntrlTask(void* pv){
             if(pid->pwm < -100.0f) pid->pwm = -100.0f;
 
             // pid->pwm = -(pid->pwm);
-            // MOTOR_REVERSE();
+            // MOTOR_BACKWARD();
 
             //debug: set pid to 0 if pwm is negative
             pid->pwm = 0;
@@ -154,6 +165,9 @@ void motCntrlTask(void* pv){
 
         //Sets the duty cycle for the PWM unit
         mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,pid->pwm);
+        } else{
+            pid->integral = 0;
+        }
 
 
         //adds up the integral error and the current RPM
@@ -183,4 +197,13 @@ void motCntrlTask(void* pv){
         vTaskDelay(5 / portTICK_PERIOD_MS);
     }
     vPortFree(pid);
+}
+
+void disableMotorControl(void){
+    controlEnable = 0;
+    mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,0);
+}
+
+void enableMotorControl(void){
+    controlEnable = 1;
 }

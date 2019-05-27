@@ -21,10 +21,12 @@
 #include "soc/timer_group_struct.h"
 #include <motController.h>
 #include "pindef.h"
+#include "motController.h"
 
 #include "bluetooth.h"
 
 #include "tasks.h"
+#include "taskhandles.h"
 
 #include "cyrill_test.h"
 
@@ -40,16 +42,16 @@
 
 void app_main()
 {
-    //tTestAlarmSet();
-    //printf("timer alarm set\n");
-
-    //xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
-    // xTaskCreate(tTestAlarmSet,"tTest", 4096, NULL, 5, NULL);
-    //xTaskCreate(beepTask,"beepTask", 4096, NULL, 5, NULL);
-    // xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
-    // xTaskCreate(winchTask, "winchTask", 4096, NULL, 5, NULL);
+    beepHandle = malloc(sizeof(xTaskHandle));
+    xTaskCreate(beepTask,"beepTask", 4096, NULL, 5, &beepHandle);
+    motCtrlHandle = malloc(sizeof(xTaskHandle));
+    xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, &motCtrlHandle);
+    xTaskCreate(pingTask,"pingTask",4096, NULL, 4, NULL);
     //xTaskCreatePinnedToCore(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL, 1);
     //xTaskCreatePinnedToCore(helloSender, "helloSender", 4096, NULL, 5, NULL, 1); //sends an incrementing number on topic helloWorldTopic every 500ms
+
+//TODO: Update priorities; teleUpdate should have a relatively low one
+
 
 
 //Code Cyrill

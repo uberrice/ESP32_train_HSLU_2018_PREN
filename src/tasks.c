@@ -19,31 +19,71 @@
 #include "soc/timer_group_struct.h"
 #include "driver/gpio.h"
 
+#include "cyrill_test.h"
+#include "taskhandles.h"
+
+uint8_t ping = 0;
 uint8_t ctr = 0;
 uint8_t county = 0;
 void helloSender(void *pvParameter){
     vTaskDelay(1000 / portTICK_PERIOD_MS); //delay to allow data structure to initialize
-    attach_u8("this is a test of a very long topic",&county);
-    attach_i32("motorrpm",getRPMref());
+    attach_u8("helloworld",&county);
     county++;
     while(1){
-        publish_u8("uint",ctr);
-        publish_u8("this is a test of a very long topic", ctr);
+        //publish_u8("uint",ctr);
+        publish_u8("helloworld", ctr);
         //publish_u16("count",ctr);
         ctr++;
         printf("sent hello world! County currently: %i\n", county);
-        vTaskDelay(100 / portTICK_PERIOD_MS);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
 
-
+uint8_t cube = 0;
+uint8_t stopsignal = 0; //1 is white, 2 is black
+uint16_t mycnt = 0;
+uint8_t signalno = 0;
 void teleUpdateTask(void *pvParameter){
     tel_init(NULL);
+    vTaskDelay(pdMS_TO_TICKS(500));
+    uint8_t blockFlag = 0;
+    uint8_t stopFlag = 0;
+    //TODO: Register vars to use for communication here
+    attach_u8("startcube",&cube); //todo: change block to cube
+    attach_u8("stop",&stopsignal);
+    attach_u8("ping",&ping);
+    attach_u8("signal",&signalno);
+    attach_i32("motorrpm",getRPMref());
+    //
     while(1){
         update_telemetry();
-        vTaskDelay(1 / portTICK_PERIOD_MS);
+        //TODO: Notify tasks whose values were updated with the update values
+        if ((cube == 1) && (blockFlag == 0))
+        {
+            xTaskNotify(beepHandle,3,eSetValueWithOverwrite);
+            xTaskCreatePinnedToCore(crane_task, "crane_task", 4096, NULL, 4, NULL,0);
+            blockFlag = 1;
+        }
+        if ((stopsignal == 1) && (stopFlag == 0))
+        {
+            xTaskNotify(beepHandle,2,eSetValueWithOverwrite);
+            xTaskCreatePinnedToCore(stop_task, "stop_task", 4096, NULL, 4, NULL,0);
+            stopFlag = 1;
+        }
+        if (signalno){
+            xTaskNotify(beepHandle,signalno,eSetValueWithOverwrite);
+            signalno = 0;
+        }
+        
+        mycnt++;
+        if(mycnt>1000){
+            mycnt = 0;
+            printf("cube is currently %i\n",cube);
+        }
+        vTaskDelay(1 / portTICK_PERIOD_MS); //TODO: Don't delay but yield
     }
 }
+
 
 int intset = 0;
 void IRAM_ATTR timer_group0_isr(void *para){
@@ -52,7 +92,7 @@ void IRAM_ATTR timer_group0_isr(void *para){
 
     int timer_idx = (int) para;
     TIMERG0.hw_timer[0].update = 1;
-    intset++;
+    //intset++;
     if(intset>0){
         intset--;
     }
@@ -89,8 +129,8 @@ void timerInitTask(void* pv){
     double timerval = 0;
     while(1){
         timer_get_counter_time_sec(TIMER_GROUP_0,TIMER_0,&timerval);
-        printf("current time value: %lf %i\n",timerval,intset);
-        printf("Rev dist: %f ; Step dist: %f\n", ONEREV_DIST, ONESTEP_DIST);
+        //printf("current time value: %lf %i\n",timerval,intset);
+        //printf("Rev dist: %f ; Step dist: %f\n", ONEREV_DIST, ONESTEP_DIST);
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
@@ -129,8 +169,15 @@ void winchTask(void* pv){
     
 }
 
-void beepTask(void*pv){
-    int8_t numtobeep = 20;
+
+
+/**
+ * @brief Beeps a number of times; defined from the variable "numtobeep"
+ * 
+ * @param pv not used
+ */
+void beepTask(void* pv){
+    uint32_t numtobeep = 0;
     //Configure forward/reverse pins for motor controller
     gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_DISABLE;
@@ -143,12 +190,25 @@ void beepTask(void*pv){
     for(;;){
         if(numtobeep > 0){
             gpio_set_level(P_BEEPER, 1);
-            vTaskDelay(500/portTICK_PERIOD_MS);
+            vTaskDelay(100/portTICK_PERIOD_MS);
             gpio_set_level(P_BEEPER, 0);
-            vTaskDelay(500/portTICK_PERIOD_MS);
+            vTaskDelay(100/portTICK_PERIOD_MS);
             numtobeep--;
         }else{
             vTaskDelay(1000/portTICK_PERIOD_MS);
+            xTaskNotifyWait(0xFFFFFFFF,0,&numtobeep,portMAX_DELAY); //waits to get a new beep value
+            printf("received notification value: %i",numtobeep);
+            //call with this:
         }
+    }
+}
+
+void pingTask(void* pv){
+    for(;;){
+    if(ping){
+        publish_u8("pong",ping);
+        ping = 0;
+    }
+    vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
