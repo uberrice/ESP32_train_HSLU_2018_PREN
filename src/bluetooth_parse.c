@@ -4,7 +4,10 @@
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "taskhandles.h"
 
 void btParse(char* buf){
-    printf("Result of thingy: %i\n",strcmp("Hello",buf));
+    if(strcmp("Hello",buf) == 0){
+    xTaskNotify(beepHandle,3,eSetValueWithOverwrite);
+    }
 }

@@ -44,9 +44,9 @@ void app_main()
 {
     beepHandle = malloc(sizeof(xTaskHandle));
     xTaskCreate(beepTask,"beepTask", 4096, NULL, 5, &beepHandle);
-    motCtrlHandle = malloc(sizeof(xTaskHandle));
-    xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, &motCtrlHandle);
-    xTaskCreate(pingTask,"pingTask",4096, NULL, 4, NULL);
+    // motCtrlHandle = malloc(sizeof(xTaskHandle));
+    // xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, &motCtrlHandle);
+    // xTaskCreate(pingTask,"pingTask",4096, NULL, 4, NULL);
     //xTaskCreatePinnedToCore(teleUpdateTask, "teleUpdateTask", 4096, NULL, 4, NULL, 1);
     //xTaskCreatePinnedToCore(helloSender, "helloSender", 4096, NULL, 5, NULL, 1); //sends an incrementing number on topic helloWorldTopic every 500ms
 
