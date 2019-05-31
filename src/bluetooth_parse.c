@@ -28,7 +28,7 @@ void btParse(char* buf){
         ptr = buf + sizeof("cube ") - 1;
         if(strncmp("start",ptr,sizeof("start")-1) == 0){
             //start cube pickup
-            xTaskCreate(crane_task, "crane_task", 4096, NULL, 4, cubeHandle);
+            xTaskCreate(crane_task, "crane_task", 4096, NULL, 4, &cubeHandle);
         }
         if(strncmp("stop",ptr,sizeof("stop")-1) == 0){
             //stop cube pickup
@@ -39,7 +39,7 @@ void btParse(char* buf){
         ptr = buf + sizeof("stop ") - 1;
         if(strncmp("start",ptr,sizeof("start")-1) == 0){
             //start stopping task
-            xTaskCreate(stop_task, "stop_task", 4096, NULL, 4, stopHandle);
+            xTaskCreate(stop_task, "stop_task", 4096, NULL, 4, &stopHandle);
         }
         if(strncmp("stop",ptr,sizeof("stop")-1) == 0){
             //stop stopping task
