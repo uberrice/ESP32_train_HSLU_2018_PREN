@@ -16,10 +16,14 @@
 static double period = 10;
 static double oldtime = 0;
 int32_t targetRPM = 0;
+int32_t accel = 1;
 int32_t intrig = 0;
 uint8_t controlEnable = 0;
 motDir_t motdir = FORWARD;
 
+void setAccel(int32_t a){
+    accel = a;
+}
 
 void setMotDir(motDir_t t){
     motdir = t;
@@ -129,7 +133,15 @@ void motCntrlTask(void* pv){
     targetRPM = 0; //CYRILL: Hier werden die target RPM initialisiert
     vTaskDelay(3000/portTICK_PERIOD_MS);
     while(1){
-        pid->targetRPM = targetRPM;
+        if (pid->targetRPM < targetRPM){
+            if (pid->targetRPM+accel > targetRPM){
+                pid->targetRPM = targetRPM;
+            } else{
+                pid->targetRPM += accel;
+            }
+        } else {
+            pid->targetRPM = targetRPM;
+        }
         pid->currRPM = PERIOD_IN_RPM(period); // TODO: if it errors, put in conditional that puts current RPM to zero if period is fast enough
         /*if (pid->currRPM > 500){
             pid->currRPM = 500;

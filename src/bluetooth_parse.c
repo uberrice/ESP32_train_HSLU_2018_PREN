@@ -51,11 +51,11 @@ void btParse(char* buf){
         ptr = buf + sizeof("winch ") - 1;
         if(strncmp("up",ptr,sizeof("up")-1) == 0){
             printf("winch up\n");
-            winch_steps = 4000;
+            winch_steps = -4000;
         }
         if(strncmp("down",ptr,sizeof("down")-1) == 0){
             printf("winch down\n");
-            winch_steps = -4000;
+            winch_steps = 4000;
         }
         if(strncmp("stop",ptr,sizeof("stop")-1) == 0){
             printf("winch stop\n");
@@ -71,6 +71,14 @@ void btParse(char* buf){
             if(0 <= myrpm && myrpm <= 2000){
                 setRPM(myrpm);
                 printf("Motor rpm set to %i\n",myrpm);
+            }
+        }
+        if(strncmp("accel ",ptr,sizeof("accel ")-1) == 0){
+            ptr = ptr + sizeof("accel ") - 1;
+            int32_t accel = (int32_t)atoi(ptr);
+            if(0 <= accel && accel <= 2000){
+                setAccel(accel);
+                printf("Motor accel set to %i\n",accel);
             }
         }
         if(strncmp("dir ",ptr,sizeof("dir ")-1) == 0){

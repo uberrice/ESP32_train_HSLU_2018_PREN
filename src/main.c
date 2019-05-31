@@ -59,7 +59,7 @@ void app_main()
 
 
 //Code Cyrill
-    // init_cyrill();
+    init_cyrill();
     // xTaskCreate(motCntrlTask, "motCntrlTask", 8192, NULL, 5, NULL);
     // xTaskCreate(crane_task, "crane_task", 4096, NULL, 4, NULL);
     //xTaskCreate(imu_task, "imu_task", 4096, NULL, 5, NULL);

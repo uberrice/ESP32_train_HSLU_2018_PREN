@@ -31,6 +31,7 @@ void senseISR(void*);
 #define MOTOR_BRAKE()   gpio_set_level(MC_FORWARD, 1); gpio_set_level(MC_REVERSE, 1);
 #define MOTOR_COAST()   gpio_set_level(MC_FORWARD, 0); gpio_set_level(MC_REVERSE, 0);
 
+void setAccel(int32_t a);
 void motCntrlTask(void* pv);
 void motStepping(void* pv);
 void motPulse(void* pv);
