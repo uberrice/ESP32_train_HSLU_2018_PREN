@@ -12,6 +12,7 @@
 #include "taskhandles.h"
 
 #define FLAG_DEBUG (0)
+#define FLAG_PER_TIMEOUT (1)
 
 static double period = 10;
 static double oldtime = 0;
@@ -156,7 +157,7 @@ void motCntrlTask(void* pv){
 
         if(pid->pwm >= 0.0f){
             //Bounds for PWM
-            if(pid->pwm > 100.0f) pid->pwm = 100.0f;
+            if(pid->pwm > M_MAXPWM) pid->pwm = M_MAXPWM;
             if(motdir == FORWARD){
                 MOTOR_FORWARD();
             } else{
@@ -165,7 +166,7 @@ void motCntrlTask(void* pv){
         } 
         else if(pid->pwm < 0.0f){
             //Bounds for PWM
-            if(pid->pwm < -100.0f) pid->pwm = -100.0f;
+            //if(pid->pwm < -M_MAXPWM) pid->pwm = -M_MAXPWM;
 
             // pid->pwm = -(pid->pwm);
             // MOTOR_BACKWARD();
@@ -185,11 +186,14 @@ void motCntrlTask(void* pv){
         //adds up the integral error and the current RPM
         pid->prevRPM = pid->currRPM;
         pid->integral += pid->error;
+
+        #if FLAG_PER_TIMEOUT
         double mytime = 0;
         timer_get_counter_time_sec(C_TIMERG,C_TIMER,&mytime);
-        if((mytime - oldtime) > 0.05){
-            period = 0.05f;
+        if((mytime - oldtime) > M_TIMEOUT){
+            period = M_TIMEOUT;
         }
+        #endif
         #if FLAG_DEBUG
         outputtim++;
         if(outputtim == 200){ //CYRILL: Multiplier für tasks hier; 2 -> alle 10 millisekunden; 10 -> alle 50 etc.
