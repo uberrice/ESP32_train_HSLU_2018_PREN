@@ -2,6 +2,8 @@
 
 uint8_t *data;
 
+const char* IMU_VALUES[]={"AcX","AcY","AcZ","Temp","GyX","GyY","GyZ"};
+
 int uart_arduino_get_sensor_value(int sensor_number)
 {
     if(sensor_number==1) uart_write_bytes(UART_NUM_1, (const char *)"1", 1);
@@ -22,6 +24,17 @@ int uart_arduino_get_sensor_value(int sensor_number)
         //printf("No sensor data available.\n");
         return -1;
     }
+    if(sensor_number==3)
+    {
+        int value_nr=0;
+        for(int c=0;c<len;c+=2)
+        {
+            publish_i16(IMU_VALUES[value_nr],(data[c]<<8)|data[c+1]);
+            //printf("%s: %i\n", IMU_VALUES[value_nr],(data[c]<<8)|data[c+1]);
+            value_nr++;
+        }
+        return 0;
+    }
     for(int c=0;c<len;c++)
     {
         int nof_digits=0;
@@ -41,10 +54,6 @@ int uart_arduino_get_sensor_value(int sensor_number)
             break;
             case 3: distance=digits[0]*100+digits[1]*10+digits[2];
             break;
-            // case 4: distance=digits[0]*1000+digits[1]*100+digits[2]*10+digits[3];
-            // break;
-            // case 5: distance=digits[0]*10000+digits[1]*1000+digits[2]*100+digits[3]*10+digits[4];
-            // break;
         }
     }
     return distance;
