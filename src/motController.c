@@ -13,6 +13,7 @@
 
 #define FLAG_DEBUG (0)
 #define FLAG_PER_TIMEOUT (1)
+#define FLAG_STALL_STOP (1) //attention; only works if FLAG_PER_TIMEOUT is also set
 
 static double period = 10;
 static double oldtime = 0;
@@ -186,12 +187,14 @@ void motCntrlTask(void* pv){
         //adds up the integral error and the current RPM
         pid->prevRPM = pid->currRPM;
         pid->integral += pid->error;
-
         #if FLAG_PER_TIMEOUT
         double mytime = 0;
         timer_get_counter_time_sec(C_TIMERG,C_TIMER,&mytime);
         if((mytime - oldtime) > M_TIMEOUT){
             period = M_TIMEOUT;
+            #if FLAG_STALL_STOP
+            if(targetRPM != 0) disableMotorControl();
+            #endif
         }
         #endif
         #if FLAG_DEBUG

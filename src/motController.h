@@ -4,7 +4,7 @@
 #include "pindef.h"
 
 #define M_MAXPWM        (60)
-#define M_TIMEOUT       (0.5)
+#define M_TIMEOUT       (0.1)
 
 void senseISR(void*);
 #define MC_PWMPIN       P_MOTORPWM
