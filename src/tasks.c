@@ -34,7 +34,7 @@ void helloSender(void *pvParameter){
         publish_u8("helloworld", ctr);
         //publish_u16("count",ctr);
         ctr++;
-        printf("sent hello world! County currently: %i\n", county);
+        //!! printf("sent hello world! County currently: %i\n", county);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
