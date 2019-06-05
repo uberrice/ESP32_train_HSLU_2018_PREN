@@ -25,7 +25,11 @@ void init_cyrill(void);
 
 void stop_task(void *pyParameter);
 
+void crane_task_accurate(void *pyParameter);
+
 void crane_task(void *pyParameter);
+
+void unload_task(void* pyParameter);
 
 void imu_task(void* pyParameter);
 

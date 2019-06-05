@@ -15,14 +15,14 @@ void crane_set_position(int position_degree, int speed)
     if(position_degree<current_crane_position)
     {
         for (int angle = current_crane_position; angle > position_degree; angle--) {
-            servo_set_angle(angle);            //printf("pulse width: %dus\n", angle);
+            servo_set_angle(angle);                     //printf("pulse width: %dus\n", angle);
             vTaskDelay(speed / portTICK_PERIOD_MS);     //Add delay, since it takes time for servo to rotate, generally 100ms/60degree rotation at 5V
         }
     }
     else if(position_degree>current_crane_position)
     {
         for (int angle = current_crane_position; angle < position_degree; angle++) {
-            servo_set_angle(angle);            //printf("pulse width: %dus\n", angle);
+            servo_set_angle(angle);                     //printf("pulse width: %dus\n", angle);
             vTaskDelay(speed / portTICK_PERIOD_MS);     //Add delay, since it takes time for servo to rotate, generally 100ms/60degree rotation at 5V
         }
     }

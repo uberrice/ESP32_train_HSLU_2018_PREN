@@ -6,9 +6,10 @@ int uart_arduino_get_sensor_value(int sensor_number)
 {
     if(sensor_number==1) uart_write_bytes(UART_NUM_1, (const char *)"1", 1);
     else if(sensor_number==2) uart_write_bytes(UART_NUM_1, (const char *)"2", 1);
+    else if(sensor_number==3) uart_write_bytes(UART_NUM_1, (const char *)"3", 1);
     else
     {
-        printf("Invalid sensor number, must be 1 or 2\n");
+        printf("Invalid sensor number, must be 1, 2 or 3\n");
         return -2;
     }
     
@@ -40,6 +41,10 @@ int uart_arduino_get_sensor_value(int sensor_number)
             break;
             case 3: distance=digits[0]*100+digits[1]*10+digits[2];
             break;
+            // case 4: distance=digits[0]*1000+digits[1]*100+digits[2]*10+digits[3];
+            // break;
+            // case 5: distance=digits[0]*10000+digits[1]*1000+digits[2]*100+digits[3]*10+digits[4];
+            // break;
         }
     }
     return distance;

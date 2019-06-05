@@ -1,6 +1,6 @@
 #include "tof.h"
 
-int tof_get_distance(tof_sensor_t sensor)
+int tof_get_distance(sensor_t sensor)
 {
     int distance=0;
     int measurements_counter=0;
@@ -17,7 +17,7 @@ int tof_get_distance(tof_sensor_t sensor)
     return distance;
 }
 
-int tof_get_average_distance(tof_sensor_t sensor, int nof_measurements)
+int tof_get_average_distance(sensor_t sensor, int nof_measurements)
 {
     int average_distance=0;
     int no_object_counter=0;
