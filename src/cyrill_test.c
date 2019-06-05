@@ -208,19 +208,19 @@ void stop_task(void *pyParameter)
         vTaskDelay(5 / portTICK_PERIOD_MS);
     }while(distance==0||distance>STOP_DISTANCE_FAR);
     setRPM(0);
-    disableMotorControl();              //Using direct PWM control
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    // disableMotorControl();              //Using direct PWM control
+    // vTaskDelay(500 / portTICK_PERIOD_MS);
 
-    do
-    {
-        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,MOTOR_SLOW_DUTY);
-        vTaskDelay(100);
-        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,0);
-        distance=tof_get_average_distance(STOP_SIGNAL_SENSOR,3);
-        vTaskDelay(50);
-    }while(distance==0||distance>stop_distance);
+    // do
+    // {
+    //     mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,MOTOR_SLOW_DUTY);
+    //     vTaskDelay(100);
+    //     mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,0);
+    //     distance=tof_get_average_distance(STOP_SIGNAL_SENSOR,3);
+    //     vTaskDelay(50);
+    // }while(distance==0||distance>stop_distance);
     gpio_set_level(P_LEDRED, 0);
-    enableMotorControl();
+    //xTaskCreate(unload_task, "unload_task", 4096, NULL, 4, NULL);
 
     while(1)
     {
