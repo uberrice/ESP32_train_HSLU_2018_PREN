@@ -54,24 +54,28 @@ void teleUpdateTask(void *pvParameter){
     attach_u8("ping",&ping);
     attach_u8("signal",&signalno);
     attach_i32("motorrpm",getRPMref());
+    attach_u8("motorenable",&controlEnable);
     //
     while(1){
         update_telemetry();
         //TODO: Notify tasks whose values were updated with the update values
         if ((cube == 1) && (blockFlag == 0))
         {
-            xTaskNotify(beepHandle,3,eSetValueWithOverwrite);
+            xTaskNotify(beepHandle,4,eSetValueWithOverwrite);
             xTaskCreatePinnedToCore(crane_task, "crane_task", 4096, NULL, 4, NULL,0);
+            publish_u8("cube",1);
             blockFlag = 1;
         }
         if ((stopsignal == 1) && (stopFlag == 0))
         {
-            xTaskNotify(beepHandle,2,eSetValueWithOverwrite);
-            xTaskCreatePinnedToCore(stop_task, "stop_task", 4096, NULL, 4, NULL,0);
+            xTaskNotify(beepHandle,5,eSetValueWithOverwrite);
+            //xTaskCreatePinnedToCore(stop_task, "stop_task", 4096, NULL, 4, NULL,0);
+            publish_u8("stop",1);
             stopFlag = 1;
         }
         if (signalno){
             xTaskNotify(beepHandle,signalno,eSetValueWithOverwrite);
+            publish_u8("signal",signalno);
             signalno = 0;
         }
         

@@ -18,7 +18,7 @@
 static double period = 10;
 static double oldtime = 0;
 int32_t targetRPM = 0;
-int32_t accel = 1;
+int32_t accel = 2;
 int32_t intrig = 0;
 uint8_t controlEnable = 0;
 motDir_t motdir = FORWARD;

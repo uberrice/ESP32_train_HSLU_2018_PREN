@@ -42,6 +42,8 @@ int32_t* getRPMref(void);
 void disableMotorControl(void);
 void enableMotorControl(void);
 
+extern uint8_t controlEnable;
+
 
 typedef enum
 {
