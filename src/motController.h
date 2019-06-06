@@ -3,6 +3,8 @@
 
 #include "pindef.h"
 
+#define M_MAXPWM        (60)
+#define M_TIMEOUT       (0.1)
 
 void senseISR(void*);
 #define MC_PWMPIN       P_MOTORPWM
@@ -31,6 +33,7 @@ void senseISR(void*);
 #define MOTOR_BRAKE()   gpio_set_level(MC_FORWARD, 1); gpio_set_level(MC_REVERSE, 1);
 #define MOTOR_COAST()   gpio_set_level(MC_FORWARD, 0); gpio_set_level(MC_REVERSE, 0);
 
+void setAccel(int32_t a);
 void motCntrlTask(void* pv);
 void motStepping(void* pv);
 void motPulse(void* pv);

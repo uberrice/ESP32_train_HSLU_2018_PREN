@@ -1,4 +1,5 @@
 #include "driver/uart.h"
+#include <telemetry_core.h>
 
 #define ECHO_TEST_TXD  (GPIO_NUM_4)
 #define ECHO_TEST_RXD  (GPIO_NUM_5)

@@ -3,3 +3,5 @@
 
 TaskHandle_t beepHandle;
 TaskHandle_t motCtrlHandle;
+TaskHandle_t cubeHandle;
+TaskHandle_t stopHandle;

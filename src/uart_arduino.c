@@ -2,13 +2,16 @@
 
 uint8_t *data;
 
+const char* IMU_VALUES[]={"AcX","AcY","AcZ","Temp","GyX","GyY","GyZ"};
+
 int uart_arduino_get_sensor_value(int sensor_number)
 {
     if(sensor_number==1) uart_write_bytes(UART_NUM_1, (const char *)"1", 1);
     else if(sensor_number==2) uart_write_bytes(UART_NUM_1, (const char *)"2", 1);
+    else if(sensor_number==3) uart_write_bytes(UART_NUM_1, (const char *)"3", 1);
     else
     {
-        printf("Invalid sensor number, must be 1 or 2\n");
+        printf("Invalid sensor number, must be 1, 2 or 3\n");
         return -2;
     }
     
@@ -20,6 +23,17 @@ int uart_arduino_get_sensor_value(int sensor_number)
     {
         //printf("No sensor data available.\n");
         return -1;
+    }
+    if(sensor_number==3)
+    {
+        int value_nr=0;
+        for(int c=0;c<len;c+=2)
+        {
+            publish_i16(IMU_VALUES[value_nr],(data[c]<<8)|data[c+1]);
+            //printf("%s: %i\n", IMU_VALUES[value_nr],(data[c]<<8)|data[c+1]);
+            value_nr++;
+        }
+        return 0;
     }
     for(int c=0;c<len;c++)
     {

@@ -34,7 +34,7 @@ void helloSender(void *pvParameter){
         publish_u8("helloworld", ctr);
         //publish_u16("count",ctr);
         ctr++;
-        printf("sent hello world! County currently: %i\n", county);
+        //!! printf("sent hello world! County currently: %i\n", county);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
@@ -78,7 +78,8 @@ void teleUpdateTask(void *pvParameter){
         mycnt++;
         if(mycnt>1000){
             mycnt = 0;
-            printf("cube is currently %i\n",cube);
+            //do something every second
+            // printf("cube is currently %i\n",cube);
         }
         vTaskDelay(1 / portTICK_PERIOD_MS); //TODO: Don't delay but yield
     }
