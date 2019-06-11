@@ -58,7 +58,14 @@ void app_main()
 
 
 //Code Cyrill
-    init_cyrill();
+    if(init_cyrill()!=0)
+    {
+        while(true)
+        {
+            printf("Error: init_cyrill\n");
+            vTaskDelay(1000 / portTICK_PERIOD_MS);
+        }
+    }
     bt_start();
     xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
     xTaskCreate(winchTask, "winchTask", 4096, NULL, 5, NULL);

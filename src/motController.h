@@ -3,7 +3,7 @@
 
 #include "pindef.h"
 
-#define M_MAXPWM        (60)
+#define M_MAXPWM        (100)
 #define M_TIMEOUT       (0.05)
 
 void senseISR(void*);

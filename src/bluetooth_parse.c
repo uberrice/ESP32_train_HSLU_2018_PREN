@@ -68,7 +68,7 @@ void btParse(char* buf){
         if(strncmp("rpm ",ptr,sizeof("rpm ")-1) == 0){
             ptr = ptr + sizeof("rpm ") - 1;
             int32_t myrpm = (int32_t)atoi(ptr);
-            if(0 <= myrpm && myrpm <= 2000){
+            if(0 <= myrpm && myrpm <= 10000){
                 setRPM(myrpm);
                 printf("Motor rpm set to %i\n",myrpm);
             }

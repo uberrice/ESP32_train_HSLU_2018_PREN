@@ -10,21 +10,33 @@
 #define CUBE_DISTANCE 120               //120 or 150 ?
 #define MOTOR_SLOW_DUTY 20              //duty cycle for PWM control (20)
 
-void init_cyrill()
+int init_cyrill()
 {
     gpio_pad_select_gpio(P_LEDRED);
     gpio_set_direction(P_LEDRED, GPIO_MODE_OUTPUT);
 
-    gpio_set_level(P_LEDRED, 0);
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-    tof_init();
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    gpio_set_level(P_LEDRED, 0);            //turn red LED on during initialization
+    vTaskDelay(4000 / portTICK_PERIOD_MS);
+    if(tof_init()!=0)
+    {
+        printf("Error: ToF-Init");
+        return(1);
+    }
     gpio_set_level(P_LEDRED, 1);
+    return(0);
 }
 
 void crane_task_accurate(void *pyParameter)
 {
+    vTaskDelay(4000 / portTICK_PERIOD_MS);
     //init_cyrill();
+    //!!
+    disableMotorControl();
+    setMotDir(FORWARD);
+    mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,30.0);
+    vTaskDelay(500000 / portTICK_PERIOD_MS);
+    //!!
+
     int distance=0;
     crane_init(P_SERVO);
     vTaskDelay(1000 / portTICK_PERIOD_MS);

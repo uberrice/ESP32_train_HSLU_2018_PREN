@@ -59,7 +59,7 @@ int uart_arduino_get_sensor_value(int sensor_number)
     return distance;
 }
 
-void uart_arduino_init()
+int uart_arduino_init()
 {
     // Configure a temporary buffer for the incoming data
     data = (uint8_t *) malloc(BUF_SIZE);
@@ -88,4 +88,5 @@ void uart_arduino_init()
         else printf("Sending ToF init command 'a' to Arduino\n");
     } while(data[0]!=1);                                                    //Arduino returns 1 if init was successful
     printf("ToF sensors initalized (Arduino)\n");
+    return(0);
 }

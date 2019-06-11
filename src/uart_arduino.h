@@ -9,4 +9,4 @@
 #define BUF_SIZE (1024)
 
 int uart_arduino_get_sensor_value(int);
-void uart_arduino_init();
+int uart_arduino_init();

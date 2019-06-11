@@ -9,4 +9,4 @@ int tof_get_distance(sensor_t);
 int tof_get_average_distance(sensor_t, int);
 
 //Initialize tof functions
-void tof_init();
+int tof_init();

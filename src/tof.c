@@ -35,7 +35,8 @@ int tof_get_average_distance(sensor_t sensor, int nof_measurements)
     return average_distance;
 }
 
-void tof_init()
+int tof_init()
 {
     uart_arduino_init();
+    return(0);
 }
