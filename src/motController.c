@@ -18,7 +18,7 @@
 static double period = 10;
 static double oldtime = 0;
 int32_t targetRPM = 0;
-int32_t accel = 1;
+int32_t accel = 5;
 int32_t intrig = 0;
 uint8_t controlEnable = 0;
 motDir_t motdir = FORWARD;
@@ -135,6 +135,9 @@ void motCntrlTask(void* pv){
     targetRPM = 0; //CYRILL: Hier werden die target RPM initialisiert
     vTaskDelay(3000/portTICK_PERIOD_MS);
     while(1){
+        if (pid->targetRPM != targetRPM){
+            pid->integral = 0;
+        }
         if (pid->targetRPM < targetRPM){
             if (pid->targetRPM+accel > targetRPM){
                 pid->targetRPM = targetRPM;
