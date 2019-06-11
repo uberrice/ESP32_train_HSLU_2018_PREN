@@ -13,7 +13,7 @@
 
 #define FLAG_DEBUG (0)
 #define FLAG_PER_TIMEOUT (1)
-#define FLAG_STALL_STOP (1) //attention; only works if FLAG_PER_TIMEOUT is also set
+#define FLAG_STALL_STOP (0) //attention; only works if FLAG_PER_TIMEOUT is also set
 
 static double period = 10;
 static double oldtime = 0;
