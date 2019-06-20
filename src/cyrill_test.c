@@ -4,11 +4,11 @@
 #define WINCH_STEPS_MAX 4150
 #define WINCH_STEPS_PART 2600
 #define WINCH_STEPS_PART2 3500
-#define STOP_DISTANCE_WHITE 75          //for white signs (75)
+#define STOP_DISTANCE_WHITE 80          //for white signs (80)
 #define STOP_DISTANCE_BLACK 95          //for black signs (95)
-#define STOP_DISTANCE_FAR 220
-#define CUBE_DISTANCE 120               //120 or 150 ?
-#define MOTOR_SLOW_DUTY 20              //duty cycle for PWM control (20)
+#define STOP_DISTANCE_FAR 170           //220?
+#define CUBE_DISTANCE 120               //120 or 150 ? (!!)
+#define MOTOR_SLOW_DUTY 25              //duty cycle for PWM control (20)
 
 int init_cyrill()
 {
@@ -19,22 +19,23 @@ int init_cyrill()
     vTaskDelay(4000 / portTICK_PERIOD_MS);
     if(tof_init()!=0)
     {
-        printf("Error: ToF-Init");
+        printf("Error: ToF-Init\n");
         return(1);
     }
+    printf("init_cyrill: DONE!\n");
     gpio_set_level(P_LEDRED, 1);
     return(0);
 }
 
-void crane_task_accurate(void *pyParameter)
+void crane_task_accurate(void *pyParameter)         //!!
 {
-    vTaskDelay(4000 / portTICK_PERIOD_MS);
+    vTaskDelay(4000 / portTICK_PERIOD_MS);          //!!
     //init_cyrill();
     //!!
-    disableMotorControl();
-    setMotDir(FORWARD);
-    mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,30.0);
-    vTaskDelay(500000 / portTICK_PERIOD_MS);
+    // disableMotorControl();
+    // setMotDir(FORWARD);
+    // mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,30.0);
+    // vTaskDelay(500000 / portTICK_PERIOD_MS);
     //!!
 
     int distance=0;
@@ -67,7 +68,7 @@ void crane_task_accurate(void *pyParameter)
     // setMotDir(FORWARD);
     // enableMotorControl();
 
-    //---
+    //---!!
     setMotDir(BACKWARD);
     setRPM(150);
     do
@@ -127,16 +128,18 @@ void crane_task(void *pyParameter)
     crane_init(P_SERVO);
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     crane_set_position(CRANE_POSITION_EXTENDED, CRANE_SPEED_FAST);
+    setRPM(0);
     enableMotorControl();
     setMotDir(FORWARD);
     vTaskDelay(500 / portTICK_PERIOD_MS);
-    setRPM(160);
+    setRPM(215);
     do
     {
         distance=tof_get_average_distance(CUBE_SENSOR,1);
         vTaskDelay(5 / portTICK_PERIOD_MS);
     }while(distance==0||distance>CUBE_DISTANCE);
-    vTaskDelay(600 / portTICK_PERIOD_MS);
+    gpio_set_level(P_LEDRED, 0);                        //!!
+    //vTaskDelay(200 / portTICK_PERIOD_MS);
     setRPM(0);
     vTaskDelay(100 / portTICK_PERIOD_MS);
 
@@ -165,7 +168,7 @@ void crane_task(void *pyParameter)
     distance=tof_get_average_distance(CUBE_SENSOR,10);
     while(1)
     {
-        if(distance==0||distance>150) publish_u8("cube",0);     //Success
+        if(distance==0||distance>CUBE_DISTANCE) publish_u8("cube",0);     //Success
         else publish_u8("cube",1);                              //No success
         vTaskDelay(2000 / portTICK_PERIOD_MS);
     }
@@ -208,29 +211,38 @@ void stop_task(void *pyParameter)
 {
     int distance=0;
     //int stop_distance=0;
-    int stop_distance=90;
+    int stop_distance=95;                           //!!
     //if(stopsignal==1) { stop_distance=STOP_DISTANCE_WHITE; }
     //else { stop_distance=STOP_DISTANCE_BLACK; }
-    enableMotorControl();               //Using PID-control
+    enableMotorControl();               //Using PI-control
     setMotDir(FORWARD);
-    setRPM(150);
-    do
-    {
-        distance=tof_get_average_distance(STOP_SIGNAL_SENSOR,1);
-        vTaskDelay(5 / portTICK_PERIOD_MS);
-    }while(distance==0||distance>STOP_DISTANCE_FAR);
-    setRPM(0);
-    // disableMotorControl();              //Using direct PWM control
-    // vTaskDelay(500 / portTICK_PERIOD_MS);
-
+    // setRPM(160);
     // do
     // {
-    //     mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,MOTOR_SLOW_DUTY);
-    //     vTaskDelay(100);
-    //     mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,0);
-    //     distance=tof_get_average_distance(STOP_SIGNAL_SENSOR,3);
-    //     vTaskDelay(50);
-    // }while(distance==0||distance>stop_distance);
+    //     distance=tof_get_average_distance(STOP_SIGNAL_SENSOR,1);
+    //     vTaskDelay(5 / portTICK_PERIOD_MS);
+    // }while(distance==0||distance>STOP_DISTANCE_FAR);
+    setRPM(0);
+    disableMotorControl();              //Using direct PWM control !!
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+
+    do
+    {
+        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,MOTOR_SLOW_DUTY);
+        vTaskDelay(200);
+        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,0);
+        distance=tof_get_average_distance(STOP_SIGNAL_SENSOR,3);
+        vTaskDelay(50);
+    }while(distance==0||distance>STOP_DISTANCE_FAR);
+
+    do
+    {
+        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,MOTOR_SLOW_DUTY);
+        vTaskDelay(50);
+        mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,0);
+        distance=tof_get_average_distance(STOP_SIGNAL_SENSOR,3);
+        vTaskDelay(50);
+    }while(distance==0||distance>stop_distance);
     gpio_set_level(P_LEDRED, 0);
     //xTaskCreate(unload_task, "unload_task", 4096, NULL, 4, NULL);
 
@@ -254,12 +266,12 @@ void imu_task(void* pyParameter)
 
 void tof_task(void* pyParameter)
 {
-    tof_init();
+    //tof_init();
     while(1)
     {
         printf("Cube Sensor: %i  \n",tof_get_average_distance(CUBE_SENSOR,5));
         printf("Stop Sensor: %i\n",tof_get_average_distance(STOP_SIGNAL_SENSOR,5));
         //printf("IMU: %i\n",tof_get_average_distance(IMU,1));
-        vTaskDelay(100 / portTICK_RATE_MS);
+        vTaskDelay(500 / portTICK_RATE_MS);
     }
 }

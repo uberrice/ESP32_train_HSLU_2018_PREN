@@ -8,7 +8,7 @@ int uart_arduino_get_sensor_value(int sensor_number)
 {
     if(sensor_number==1) uart_write_bytes(UART_NUM_1, (const char *)"1", 1);
     else if(sensor_number==2) uart_write_bytes(UART_NUM_1, (const char *)"2", 1);
-    else if(sensor_number==3) uart_write_bytes(UART_NUM_1, (const char *)"3", 1);
+    //else if(sensor_number==3) uart_write_bytes(UART_NUM_1, (const char *)"3", 1);
     else
     {
         printf("Invalid sensor number, must be 1, 2 or 3\n");
@@ -21,20 +21,20 @@ int uart_arduino_get_sensor_value(int sensor_number)
     int len = uart_read_bytes(UART_NUM_1, data, BUF_SIZE, 20 / portTICK_RATE_MS);
     if(len<=0)
     {
-        //printf("No sensor data available.\n");
+        printf("No sensor data available.\n");          //!!
         return -1;
     }
-    if(sensor_number==3)
-    {
-        int value_nr=0;
-        for(int c=0;c<len;c+=2)
-        {
-            publish_i16(IMU_VALUES[value_nr],(data[c]<<8)|data[c+1]);
-            //printf("%s: %i\n", IMU_VALUES[value_nr],(data[c]<<8)|data[c+1]);
-            value_nr++;
-        }
-        return 0;
-    }
+    // if(sensor_number==3)
+    // {
+    //     int value_nr=0;
+    //     for(int c=0;c<len;c+=2)
+    //     {
+    //         publish_i16(IMU_VALUES[value_nr],(data[c]<<8)|data[c+1]);
+    //         //printf("%s: %i\n", IMU_VALUES[value_nr],(data[c]<<8)|data[c+1]);
+    //         value_nr++;
+    //     }
+    //     return 0;
+    // }
     for(int c=0;c<len;c++)
     {
         int nof_digits=0;

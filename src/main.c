@@ -69,7 +69,7 @@ void app_main()
     bt_start();
     xTaskCreate(timerInitTask,"timerInitTask", 4096, NULL, 5, NULL);
     xTaskCreate(winchTask, "winchTask", 4096, NULL, 5, NULL);
-    xTaskCreate(imu_task, "imu_task", 4096, NULL, 5, NULL);
+    //xTaskCreate(imu_task, "imu_task", 4096, NULL, 5, NULL);
     //xTaskCreate(crane_task_accurate, "crane_task_accurate", 4096, NULL, 4, NULL);
     //xTaskCreate(crane_task, "crane_task", 4096, NULL, 4, NULL);
     //xTaskCreate(tof_task, "tof_task", 4096, NULL, 5, NULL);
