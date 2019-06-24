@@ -28,8 +28,8 @@ void senseISR(void*);
 #define SPEED_IN_RPM(spd)    (ONEREV_DIST/spd*1000)
 #define RPM_IN_M_S(rpm) (rpm/60 * ONEREV_DIST / 1000)
 
-#define MOTOR_FORWARD() gpio_set_level(MC_FORWARD, 0); gpio_set_level(MC_REVERSE, 1);
-#define MOTOR_BACKWARD() gpio_set_level(MC_FORWARD, 1); gpio_set_level(MC_REVERSE, 0);
+#define MOTOR_BACKWARD() gpio_set_level(MC_FORWARD, 0); gpio_set_level(MC_REVERSE, 1);
+#define MOTOR_FORWARD() gpio_set_level(MC_FORWARD, 1); gpio_set_level(MC_REVERSE, 0);
 #define MOTOR_BRAKE()   gpio_set_level(MC_FORWARD, 1); gpio_set_level(MC_REVERSE, 1);
 #define MOTOR_COAST()   gpio_set_level(MC_FORWARD, 0); gpio_set_level(MC_REVERSE, 0);
 
