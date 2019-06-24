@@ -35,6 +35,17 @@ void btParse(char* buf){
             vTaskDelete(cubeHandle);
         }
     }
+    if(strncmp("unload ", buf, sizeof("unload ")-1) == 0){
+        ptr = buf + sizeof("unload ") - 1;
+        if(strncmp("start",ptr,sizeof("start")-1) == 0){
+            //start cube unload
+            xTaskCreate(unload_task, "unload_task", 4096, NULL, 4, &unloadHandle);
+        }
+        if(strncmp("stop",ptr,sizeof("stop")-1) == 0){
+            //stop cube unload
+            vTaskDelete(unloadHandle);
+        }
+    }
     if(strncmp("stop ", buf, sizeof("stop ")-1) == 0){
         ptr = buf + sizeof("stop ") - 1;
         if(strncmp("start",ptr,sizeof("start")-1) == 0){
