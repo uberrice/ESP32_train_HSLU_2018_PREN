@@ -132,14 +132,14 @@ void crane_task(void *pyParameter)
     enableMotorControl();
     setMotDir(FORWARD);
     vTaskDelay(500 / portTICK_PERIOD_MS);
-    setRPM(215);
+    setRPM(300);
     do
     {
         distance=tof_get_average_distance(CUBE_SENSOR,1);
         vTaskDelay(5 / portTICK_PERIOD_MS);
     }while(distance==0||distance>CUBE_DISTANCE);
     gpio_set_level(P_LEDRED, 0);                        //!!
-    //vTaskDelay(200 / portTICK_PERIOD_MS);
+    vTaskDelay(200 / portTICK_PERIOD_MS);               //evtl 300
     setRPM(0);
     vTaskDelay(100 / portTICK_PERIOD_MS);
 
@@ -229,7 +229,7 @@ void stop_task(void *pyParameter)
     do
     {
         mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,MOTOR_SLOW_DUTY);
-        vTaskDelay(200);
+        vTaskDelay(100);
         mcpwm_set_duty(C_MCPWMUNIT,C_MCPWMTIMER,MCPWM_OPR_A,0);
         distance=tof_get_average_distance(STOP_SIGNAL_SENSOR,3);
         vTaskDelay(50);
