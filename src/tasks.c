@@ -22,6 +22,8 @@
 #include "cyrill_test.h"
 #include "taskhandles.h"
 
+extern int32_t intrig;
+
 uint8_t ping = 0;
 uint8_t ctr = 0;
 uint8_t county = 0;
@@ -76,8 +78,10 @@ void teleUpdateTask(void *pvParameter){
         }
         
         mycnt++;
-        if(mycnt>1000){
+        if(mycnt>100){
             mycnt = 0;
+            float dist = intrig * ONESTEP_DIST;
+            publish_f32("distanceMM", dist);
             //do something every second
             // printf("cube is currently %i\n",cube);
         }

@@ -53,7 +53,11 @@ void IRAM_ATTR senseISR(void* pv){
         oldtime = newtime;
         
     }
-    intrig++;
+    if(motdir == FORWARD){
+        intrig++;
+    } else{
+        intrig--;
+    }
 }
 
 
