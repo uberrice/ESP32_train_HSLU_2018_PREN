@@ -190,6 +190,9 @@ void motCntrlTask(void* pv){
         //adds up the integral error and the current RPM
         pid->prevRPM = pid->currRPM;
         pid->integral += pid->error;
+        if(pid->integral > 130000){
+            pid->integral = 130000;
+        }
         #if FLAG_PER_TIMEOUT
         double mytime = 0;
         timer_get_counter_time_sec(C_TIMERG,C_TIMER,&mytime);
