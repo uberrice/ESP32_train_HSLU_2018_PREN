@@ -210,11 +210,10 @@ void unload_task(void* pyParameter)
 void stop_task(void *pyParameter)
 {
     int distance=0;
-    //int stop_distance=0;
     int stop_distance=0;                           //!!
     if(stopsignal==1) { stop_distance=STOP_DISTANCE_WHITE; }
     else if (stopsignal==2) { stop_distance=STOP_DISTANCE_BLACK; }
-    enableMotorControl();               //Using PI-control
+    //enableMotorControl();               //Using PI-control
     setMotDir(FORWARD);
     // setRPM(160);
     // do
@@ -245,7 +244,9 @@ void stop_task(void *pyParameter)
     }while(distance==0||distance>stop_distance);
     gpio_set_level(P_LEDRED, 0);
     //xTaskCreate(unload_task, "unload_task", 4096, NULL, 4, NULL);
-
+    setRPM(0);
+    enableMotorControl();
+    
     while(1)
     {
         publish_u8("stop",1);

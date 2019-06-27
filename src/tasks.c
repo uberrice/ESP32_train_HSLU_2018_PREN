@@ -33,7 +33,7 @@ void helloSender(void *pvParameter){
     county++;
     while(1){
         //publish_u8("uint",ctr);
-        publish_u8("helloworld", ctr);
+        //publish_u8("helloworld", ctr);
         //publish_u16("count",ctr);
         ctr++;
         //!! printf("sent hello world! County currently: %i\n", county);
@@ -45,6 +45,7 @@ uint8_t cube = 0;
 uint8_t stopsignal = 0; //1 is white, 2 is black
 uint16_t mycnt = 0;
 uint8_t signalno = 0;
+uint8_t directionno = 0;
 void teleUpdateTask(void *pvParameter){
     tel_init(NULL);
     vTaskDelay(pdMS_TO_TICKS(500));
@@ -55,6 +56,7 @@ void teleUpdateTask(void *pvParameter){
     attach_u8("stop",&stopsignal);
     attach_u8("ping",&ping);
     attach_u8("signal",&signalno);
+    attach_u8("direction",&directionno);
     attach_i32("motorrpm",getRPMref());
     //
     while(1){
@@ -70,12 +72,23 @@ void teleUpdateTask(void *pvParameter){
         {
             xTaskNotify(beepHandle,stopsignal,eSetValueWithOverwrite);
             xTaskCreatePinnedToCore(stop_task, "stop_task", 4096, NULL, 4, NULL,0);
-            printf("Stopsignal: %i\n", stopsignal);
             stopFlag = 1;
         }
         if (signalno){
             xTaskNotify(beepHandle,signalno,eSetValueWithOverwrite);
             signalno = 0;
+        }
+        if (directionno){
+            xTaskNotify(beepHandle,directionno,eSetValueWithOverwrite);
+            if(directionno==1)
+            {
+                setMotDir(FORWARD);
+            }
+            else if(directionno==2)
+            {
+                setMotDir(BACKWARD);
+            }
+            directionno=0;
         }
         
         mycnt++;

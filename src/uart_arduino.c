@@ -21,7 +21,7 @@ int uart_arduino_get_sensor_value(int sensor_number)
     int len = uart_read_bytes(UART_NUM_1, data, BUF_SIZE, 20 / portTICK_RATE_MS);
     if(len<=0)
     {
-        printf("No sensor data available.\n");          //!!
+        //printf("No sensor data available.\n");          //!!
         return -1;
     }
     // if(sensor_number==3)
