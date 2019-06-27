@@ -211,9 +211,9 @@ void stop_task(void *pyParameter)
 {
     int distance=0;
     //int stop_distance=0;
-    int stop_distance=95;                           //!!
-    //if(stopsignal==1) { stop_distance=STOP_DISTANCE_WHITE; }
-    //else { stop_distance=STOP_DISTANCE_BLACK; }
+    int stop_distance=0;                           //!!
+    if(stopsignal==1) { stop_distance=STOP_DISTANCE_WHITE; }
+    else if (stopsignal==2) { stop_distance=STOP_DISTANCE_BLACK; }
     enableMotorControl();               //Using PI-control
     setMotDir(FORWARD);
     // setRPM(160);

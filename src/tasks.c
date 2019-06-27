@@ -66,10 +66,11 @@ void teleUpdateTask(void *pvParameter){
             xTaskCreatePinnedToCore(crane_task, "crane_task", 4096, NULL, 4, NULL,0);
             blockFlag = 1;
         }
-        if ((stopsignal == 1) && (stopFlag == 0))
+        if ((stopsignal >= 1) && (stopFlag == 0))
         {
-            xTaskNotify(beepHandle,2,eSetValueWithOverwrite);
+            xTaskNotify(beepHandle,stopsignal,eSetValueWithOverwrite);
             xTaskCreatePinnedToCore(stop_task, "stop_task", 4096, NULL, 4, NULL,0);
+            printf("Stopsignal: %i\n", stopsignal);
             stopFlag = 1;
         }
         if (signalno){
